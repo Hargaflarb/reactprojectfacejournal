@@ -36,3 +36,60 @@
     transform: rotate(360deg);
   }
 }
+
+#header{
+  background-color: darkgray;
+  align-content: center;
+  padding-left: 2%;
+  padding-right: 2%;
+  height: 10%;
+  min-height: 30px;
+  position: sticky;
+  top:0;
+}
+
+#sidebar{
+  background-color: lightgrey;
+  position: sticky;
+  top:0;
+  float:right;
+  width: 20%;
+  min-width: 30px;
+  height: 100%;
+  padding: 2%;
+  box-sizing: border-box;
+  
+}
+
+#feed {
+background-color: gray;
+height: 90%;
+width:80%;
+box-sizing: border-box;
+padding-left: 5%;
+padding-right: 2%;
+overflow: scroll;
+}
+
+#root,body,html{
+height: 100%;
+}
+
+.post{
+  background-color: darkgray;
+  cursor: pointer;
+  padding: 20px;
+  margin: 1%;
+}
+
+h3.post:hover{
+  text-decoration: underline;
+}
+
+#addPostBtn{
+  cursor: pointer;
+  border-radius: 90%;
+  background-color: lightgrey;
+  font-size: large;
+  text-align: center;
+}

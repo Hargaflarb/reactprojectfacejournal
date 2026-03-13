@@ -3,7 +3,13 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <>
+    <div id="sidebar"><h>Sidebar</h></div>
+    <div id="header"><button id="addPostBtn"><b>+</b></button><h>Group/Server name</h></div>
+    <div id="feed"><TemplatePost/> <TemplatePost/><TemplatePost/><TemplatePost/><TemplatePost/><TemplatePost/><TemplatePost/><TemplatePost/><TemplatePost/><TemplatePost/><TemplatePost/></div>
+    
+    </>
+    /*<div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -18,8 +24,20 @@ function App() {
           Learn React
         </a>
       </header>
-    </div>
+    </div>*/
   );
+}
+function TemplatePost(){
+  return <Post title="Temp Title" posterUserName="Temp user" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+}
+
+function Post(props){
+  return(
+  <div class="post">
+    <h3>{props.title}</h3>
+    <h4>{props.posterUsername}</h4>
+    <p>{props.text}</p>
+  </div>)
 }
 
 export default App;
