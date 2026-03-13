@@ -16,12 +16,13 @@ class TCPClient extends React.Component
 
 
     static ConnectToServer(){
-        const client = new WebSocket('http://192.168.87.152:12000')
+        console.log("trying to connect to server")
+        const client = new WebSocket('http://localhost:3000'); //192.168.87.152:12000');
         
-        // client.addEventListener("open", event => {
-        //     console.log("connection open, sending name");
-        //     client.send("~username~ webstuff");
-        // });
+        client.addEventListener("open", event => {
+            console.log("connection open, sending name");
+            client.send("~username~ webstuff");
+        });
         
         client.addEventListener("message", event => {
             console.log("Message from server: ", event.data)
