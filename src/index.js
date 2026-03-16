@@ -3,13 +3,11 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import TCPClient from './Client';
-import TCPServer from '../server';
+import WSClient from './Client';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <TCPClient/>
     <App />
   </React.StrictMode>
 );
@@ -18,5 +16,6 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
-TCPServer.StartServer();
-TCPClient.ConnectToServer();
+
+let client = new WSClient()
+client.ConnectToServer();

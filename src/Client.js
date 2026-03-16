@@ -2,37 +2,43 @@ import React from 'react';
 import './index.css';
 
 
-class TCPClient extends React.Component
+class WSClient extends React.Component
 {
     constructor(props){
         super(props);
         this.state = {};
+        
+        this.client = new WebSocket(`ws://localhost:8000?username=${"Bingus"}`);
     }
 
     render(){
-        console.log("fuck yall");
         return <h1>HI FUCKERS</h1>
     }
 
 
-    static ConnectToServer(){
-        console.log("trying to connect to server")
-        const client = new WebSocket('http://localhost:8000'); //192.168.87.152:12000');
-        
-        client.addEventListener("open", event => {
-            console.log("connection open, sending name");
-            client.send("~username~ webstuff");
+    ConnectToServer(){
+        console.log("trying to connect to server");
+        //const client = client; //192.168.87.152:12000');
+
+        this.client.addEventListener("open", event => {
+            this.SendToServer("Connection established");
+            console.log("connection opened");
         });
         
-        client.addEventListener("message", event => {
-            console.log("Message from server: ", event.data)
-        })
+        this.client.addEventListener("message", event => {
+            console.log("Message from server: ", event.data);
+        });
 
+        this.client.addEventListener("close", event =>{
+            console.log("server closed or crashed.");
+        });
+    }
+
+    SendToServer(sentObj){
+        let jsonMessage = JSON.stringify(sentObj);
+        this.client.send(jsonMessage);
     }
 }
 
 
-
-
-
-export default TCPClient;
+export default WSClient;
