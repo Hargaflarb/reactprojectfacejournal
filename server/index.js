@@ -2,7 +2,7 @@
 // to start the server, write "node index.js" in the terminal, while in the server directory.
 // if you're unsure of how it works hit me up.
 
-
+const { testQuery, sqlConfig} = require('./database.js');
 const { WebSocketServer } = require("ws");
 const http = require("http");
 const uuidv4 = require("uuid").v4;
@@ -74,9 +74,9 @@ class WSServer
 }
 
 
-WSServer.StartServer();
+//WSServer.StartServer();
 
-
+testQuery();
 
 
 
