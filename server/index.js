@@ -8,6 +8,9 @@ const http = require("http");
 const uuidv4 = require("uuid").v4;
 const url = require("url");
 
+
+
+
 class WSServer
 {
   constructor(){
@@ -24,7 +27,8 @@ class WSServer
     const wsServer = new WebSocketServer({ server });
     
     wsServer.on("connection", (connection, request) => {
-      const { username } = url.parse(request.url, true).query;
+      // const { username } = url.parse(request.url, true).query;
+      const { username } = { username: "bingues" };
       console.log(`${username} connected`);
       const uuid = uuidv4();
       WSServer.connections[uuid] = connection;
@@ -34,6 +38,7 @@ class WSServer
       };
       connection.on("message", (message) => WSServer.handleMessage(message, uuid));
       connection.on("close", () => WSServer.handleClose(uuid));
+
     });
 
     server.listen(port, () => {
@@ -48,16 +53,12 @@ class WSServer
     user.state = message;
     WSServer.broadcast();
   
-    console.log(
-      `${user.username} updated their updated state: ${JSON.stringify(
-        user.state,
-      )}`,
-    );
+    console.log(`${user.username} updated their state: ${JSON.stringify(user.state,)}`,);
   }
   
   
   static handleClose(uuid){
-    console.log(`${users[uuid].username} disconnected`);
+    console.log(`${WSServer.users[uuid].username} disconnected`);
     delete WSServer.connections[uuid];
     delete WSServer.users[uuid];
     WSServer.broadcast();
@@ -68,6 +69,7 @@ class WSServer
       const connection = WSServer.connections[uuid];
       const message = JSON.stringify(WSServer.users);
       connection.send(message);
+      console.log(message);
     })
   }
 
