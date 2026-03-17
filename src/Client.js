@@ -7,8 +7,7 @@ class WSClient extends React.Component
     constructor(props){
         super(props);
         this.state = {};
-        
-        this.client = new WebSocket(`ws://localhost:8000?username=${"Bingus"}`);
+
     }
 
     render(){
@@ -19,6 +18,7 @@ class WSClient extends React.Component
     ConnectToServer(){
         console.log("trying to connect to server");
         //const client = client; //192.168.87.152:12000');
+        this.client = new WebSocket(`ws://localhost:8000?username=${"Bingus"}`);
 
         this.client.addEventListener("open", event => {
             this.SendToServer("Connection established");
