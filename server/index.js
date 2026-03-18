@@ -50,29 +50,75 @@ class WSServer
   static handleMessage(bytes, uuid){
     const message = JSON.parse(bytes.toString());
     const user = WSServer.users[uuid];
+
+    this.GetServerResponse(message);
+
     user.state = message;
-    WSServer.broadcast();
+    WSServer.broadcast(message);
   
     console.log(`${user.username} updated their state: ${JSON.stringify(user.state,)}`,);
   }
   
   
   static handleClose(uuid){
-    console.log(`${WSServer.users[uuid].username} disconnected`);
+    let text = `${WSServer.users[uuid].username} disconnected`;
     delete WSServer.connections[uuid];
     delete WSServer.users[uuid];
-    WSServer.broadcast();
+    console.log(text);
+    WSServer.broadcast(text);
   }
   
-  static broadcast(){
+  static broadcast(broadcastObject){
     Object.keys(WSServer.connections).forEach((uuid) => {
       const connection = WSServer.connections[uuid];
-      const message = JSON.stringify(WSServer.users);
+      const message = JSON.stringify(broadcastObject);
       connection.send(message);
       console.log(message);
-    })
+    });
   }
 
+  
+
+  static GetServerResponse(message){
+
+    switch (message.message_type){
+        case "post":
+          message.user; // the user who posted
+          message.text; // the post itself
+          // database stuff here
+          let postID = null; // the new posts ID
+
+          message.postID = postID;
+          break;
+        case "comment":
+          message.user; // the user who commented
+          message.postID; // the ID of the post that is being commented on
+          message.text; // the comment itself
+          // database stuff here
+          let commentID = null; // the new comments ID
+
+
+          message.commentID = commentID;
+          break;
+        case "post-like":
+          message.user; // the user who liked
+          message.value; //1 if it's a like, -1 if it's a dislike
+          message.postID; // the liked posts ID
+          // database stuff here
+          break;
+        case "comment-like":
+          message.user; // the user who liked
+          message.value; // 1 if it's a like, -1 if it's a dislike
+          message.commentID; // the liked comments ID
+          // database stuff here
+          break;
+        default:
+        console.log("invalid server interaction");
+          break;
+      }
+      
+      return message;
+  }
 }
 
 
