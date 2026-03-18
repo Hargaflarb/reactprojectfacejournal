@@ -51,12 +51,12 @@ class WSServer
     const message = JSON.parse(bytes.toString());
     const user = WSServer.users[uuid];
 
-    this.GetServerResponse(message);
+    const responds = this.GetServerResponse(message);
 
-    user.state = message;
-    WSServer.broadcast(message);
+    // user.state = message;
+    WSServer.broadcast(responds);
   
-    console.log(`${user.username} updated their state: ${JSON.stringify(user.state,)}`,);
+    // console.log(`${user.username} updated their state: ${JSON.stringify(responds,)}`,);
   }
   
   
@@ -79,37 +79,37 @@ class WSServer
 
   
 
-  static GetServerResponse(message){
+  static GetServerResponse(resived){
 
-    switch (message.message_type){
+    switch (resived.message_type){
         case "post":
-          message.user; // the user who posted
-          message.text; // the post itself
+          resived.message.user; // the user who posted
+          resived.message.text; // the post itself
           // database stuff here
           let postID = null; // the new posts ID
 
-          message.postID = postID;
+          resived.postID = postID;
           break;
         case "comment":
-          message.user; // the user who commented
-          message.postID; // the ID of the post that is being commented on
-          message.text; // the comment itself
+          resived.message.user; // the user who commented
+          resived.message.postID; // the ID of the post that is being commented on
+          resived.message.text; // the comment itself
           // database stuff here
           let commentID = null; // the new comments ID
 
 
-          message.commentID = commentID;
+          resived.commentID = commentID;
           break;
         case "post-like":
-          message.user; // the user who liked
-          message.value; //1 if it's a like, -1 if it's a dislike
-          message.postID; // the liked posts ID
+          resived.message.user; // the user who liked
+          resived.message.value; //1 if it's a like, -1 if it's a dislike
+          resived.message.postID; // the liked posts ID
           // database stuff here
           break;
         case "comment-like":
-          message.user; // the user who liked
-          message.value; // 1 if it's a like, -1 if it's a dislike
-          message.commentID; // the liked comments ID
+          resived.message.user; // the user who liked
+          resived.message.value; // 1 if it's a like, -1 if it's a dislike
+          resived.message.commentID; // the liked comments ID
           // database stuff here
           break;
         default:
@@ -117,7 +117,7 @@ class WSServer
           break;
       }
       
-      return message;
+      return resived;
   }
 }
 

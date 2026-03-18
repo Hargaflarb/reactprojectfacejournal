@@ -44,7 +44,13 @@ class WSClient extends React.Component
         this.client.send(jsonMessage);
     }
 
-
+    SendLogIn(username, password){
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "login",
+            }
+        );
+    }
 
     SendPost(text){
         let user = "bingus";
