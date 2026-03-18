@@ -8,6 +8,9 @@ const http = require("http");
 const uuidv4 = require("uuid").v4;
 const url = require("url");
 
+
+
+
 class WSServer
 {
   constructor(){
@@ -24,7 +27,8 @@ class WSServer
     const wsServer = new WebSocketServer({ server });
     
     wsServer.on("connection", (connection, request) => {
-      const { username } = url.parse(request.url, true).query;
+      // const { username } = url.parse(request.url, true).query;
+      const { username } = { username: "bingues" };
       console.log(`${username} connected`);
       const uuid = uuidv4();
       WSServer.connections[uuid] = connection;
@@ -34,6 +38,7 @@ class WSServer
       };
       connection.on("message", (message) => WSServer.handleMessage(message, uuid));
       connection.on("close", () => WSServer.handleClose(uuid));
+
     });
 
     server.listen(port, () => {
@@ -45,32 +50,75 @@ class WSServer
   static handleMessage(bytes, uuid){
     const message = JSON.parse(bytes.toString());
     const user = WSServer.users[uuid];
-    user.state = message;
-    WSServer.broadcast();
+
+    const responds = this.GetServerResponse(message);
+
+    // user.state = message;
+    WSServer.broadcast(responds);
   
-    console.log(
-      `${user.username} updated their updated state: ${JSON.stringify(
-        user.state,
-      )}`,
-    );
+    // console.log(`${user.username} updated their state: ${JSON.stringify(responds,)}`,);
   }
   
   
   static handleClose(uuid){
-    console.log(`${users[uuid].username} disconnected`);
+    let text = `${WSServer.users[uuid].username} disconnected`;
     delete WSServer.connections[uuid];
     delete WSServer.users[uuid];
-    WSServer.broadcast();
+    console.log(text);
+    WSServer.broadcast(text);
   }
   
-  static broadcast(){
+  static broadcast(broadcastObject){
     Object.keys(WSServer.connections).forEach((uuid) => {
       const connection = WSServer.connections[uuid];
-      const message = JSON.stringify(WSServer.users);
+      const message = JSON.stringify(broadcastObject);
       connection.send(message);
-    })
+      console.log(message);
+    });
   }
 
+  
+
+  static GetServerResponse(resived){
+
+    switch (resived.message_type){
+        case "post":
+          resived.message.user; // the user who posted
+          resived.message.text; // the post itself
+          // database stuff here
+          let postID = null; // the new posts ID
+
+          resived.postID = postID;
+          break;
+        case "comment":
+          resived.message.user; // the user who commented
+          resived.message.postID; // the ID of the post that is being commented on
+          resived.message.text; // the comment itself
+          // database stuff here
+          let commentID = null; // the new comments ID
+
+
+          resived.commentID = commentID;
+          break;
+        case "post-like":
+          resived.message.user; // the user who liked
+          resived.message.value; //1 if it's a like, -1 if it's a dislike
+          resived.message.postID; // the liked posts ID
+          // database stuff here
+          break;
+        case "comment-like":
+          resived.message.user; // the user who liked
+          resived.message.value; // 1 if it's a like, -1 if it's a dislike
+          resived.message.commentID; // the liked comments ID
+          // database stuff here
+          break;
+        default:
+        console.log("invalid server interaction");
+          break;
+      }
+      
+      return resived;
+  }
 }
 
 
