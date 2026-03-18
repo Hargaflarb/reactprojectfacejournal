@@ -26,4 +26,37 @@ async function testQuery() {
 
 }
 
-module.exports = { testQuery, sqlConfig};
+async function addPostQuery(profileID, text) {
+    try {
+        await sql.connect(sqlConfig);
+        const result = await sql.query(`INSERT INTO Post VALUES ('${profileID, text})`);
+        console.dir(result);
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+async function addCommentQuery(profileID, text, postID) {
+    try {
+        await sql.connect(sqlConfig);
+        const result = await sql.query(`INSERT INTO Comment VALUES ('${profileID, text, postID})`);
+        console.dir(result);
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+async function likePostQuery(postID) {
+    try {
+        await sql.connect(sqlConfig);
+        const result = await sql.query(`INSERT INTO Post VALUES ('${profileID, text})`);
+        console.dir(result);
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+module.exports = { testQuery, addPostQuery, addCommentQuery, sqlConfig};
