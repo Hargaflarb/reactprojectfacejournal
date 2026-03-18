@@ -26,7 +26,7 @@ class WSClient extends React.Component
         this.client = new WebSocket(`ws://localhost:8000`);//?username=${"Bingus"}`);
 
         this.client.addEventListener("open", event => {
-            this.SendConnectionNotice();
+            this.SendNotice("Connection Established");
             console.log("connection opened");
         });
         
@@ -39,17 +39,41 @@ class WSClient extends React.Component
         });
     }
 
-    SendConnectionNotice(){ //should send it's acount name and stuff here, and then return and acount id
-        let jsonMessage = JSON.stringify("Connection Established");
+    SendNotice(notice){
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "notice",
+                message:{
+                    notice: notice
+                }
+            }
+        );
+        
         this.client.send(jsonMessage);
     }
 
-    SendLogIn(username, password){
+    RequestLogIn(username, password){
         let jsonMessage = JSON.stringify(
             {
                 message_type: "login",
+                message:{
+                    username: username,
+                    password: password
+                }
             }
         );
+
+        this.client.send(jsonMessage);
+    }
+
+    RequestPostHistory(){
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "post-history"
+            }
+        )
+
+        this.client.send(jsonMessage);
     }
 
     SendPost(text){

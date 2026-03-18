@@ -51,14 +51,15 @@ class WSServer
     const message = JSON.parse(bytes.toString());
     const user = WSServer.users[uuid];
 
-    const responds = this.GetServerResponse(message);
+    const responds = this.GetServerResponse(message, uuid);
 
     // user.state = message;
-    WSServer.broadcast(responds);
+    if (responds != null){
+      WSServer.broadcast(responds);
+    }
   
     // console.log(`${user.username} updated their state: ${JSON.stringify(responds,)}`,);
   }
-  
   
   static handleClose(uuid){
     let text = `${WSServer.users[uuid].username} disconnected`;
@@ -77,47 +78,82 @@ class WSServer
     });
   }
 
+  static MonoSend(sentObject, uuid){
+      const connection = WSServer.connections[uuid];
+      const message = JSON.stringify(sentObject);
+      connection.send(message);
+      console.log(message);
+  }
   
 
-  static GetServerResponse(resived){
+  static GetServerResponse(resived, uuid){
 
     switch (resived.message_type){
-        case "post":
-          resived.message.user; // the user who posted
-          resived.message.text; // the post itself
-          // database stuff here
-          let postID = null; // the new posts ID
+      case "post":
+        resived.message.user; // the user who posted
+        resived.message.text; // the post itself
+        // database stuff here
+        
+        let postID = null; // the new posts ID
 
-          resived.postID = postID;
-          break;
-        case "comment":
-          resived.message.user; // the user who commented
-          resived.message.postID; // the ID of the post that is being commented on
-          resived.message.text; // the comment itself
-          // database stuff here
-          let commentID = null; // the new comments ID
+        resived.postID = postID;
+        return resived;
 
+      case "comment":
+        resived.message.user; // the user who commented
+        resived.message.postID; // the ID of the post that is being commented on
+        resived.message.text; // the comment itself
+        // database stuff here
+        
+        let commentID = null; // the new comments ID
 
-          resived.commentID = commentID;
-          break;
-        case "post-like":
-          resived.message.user; // the user who liked
-          resived.message.value; //1 if it's a like, -1 if it's a dislike
-          resived.message.postID; // the liked posts ID
-          // database stuff here
-          break;
-        case "comment-like":
-          resived.message.user; // the user who liked
-          resived.message.value; // 1 if it's a like, -1 if it's a dislike
-          resived.message.commentID; // the liked comments ID
-          // database stuff here
-          break;
-        default:
+        resived.commentID = commentID;
+        return resived;
+
+      case "post-like":
+        resived.message.user; // the user who liked
+        resived.message.value; //1 if it's a like, -1 if it's a dislike
+        resived.message.postID; // the liked posts ID
+        // database stuff here
+        return resived;
+
+      case "comment-like":
+        resived.message.user; // the user who liked
+        resived.message.value; // 1 if it's a like, -1 if it's a dislike
+        resived.message.commentID; // the liked comments ID
+        // database stuff here
+        return resived;
+
+      case "login":
+        resived.message.username; // the username
+        resived.message.password; // the password
+        // database stuff here
+
+        let validLogin = false; // bool descriping wether the login was a success
+
+        resived.validLogin = validLogin;
+        this.MonoSend(resived, uuid);
+        break;
+
+      case "post-history":
+        // database stuff here
+
+        let postHistoryList = [];
+
+        this.MonoSend(postHistoryList, uuid);
+        break;
+
+      case "notice":
+        console.log(resived.message);
+        break;
+
+      default:
         console.log("invalid server interaction");
-          break;
-      }
-      
-      return resived;
+        break;
+    }
+
+
+    return null;
   }
 }
 
