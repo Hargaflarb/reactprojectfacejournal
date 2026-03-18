@@ -18,7 +18,6 @@ class WSClient extends React.Component
     render(){
         return <h1>no</h1>
     }
-//this.SendPost("ayyy, i'm walking here")
 
     ConnectToServer(){
         console.log("trying to connect to server");
@@ -27,11 +26,12 @@ class WSClient extends React.Component
 
         this.client.addEventListener("open", event => {
             this.SendNotice("Connection Established");
-            console.log("connection opened");
+            // console.log("connection opened");
         });
         
         this.client.addEventListener("message", event => {
-            console.log("Message from server: ", event.data);
+            this.RecieveMessage(JSON.parse(event.data));
+            // console.log("Message from server: ", event.data);
         });
 
         this.client.addEventListener("close", event =>{
@@ -39,6 +39,92 @@ class WSClient extends React.Component
         });
     }
 
+    
+    RequestLogIn(username, password){
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "login",
+                message:{
+                    username: username,
+                    password: password
+                }
+            }
+        );
+        
+        this.client.send(jsonMessage);
+    }
+    
+    RequestPostHistory(){
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "post-history"
+            }
+        )
+        
+        this.client.send(jsonMessage);
+    }
+    
+    SendPost(text){
+        let user = "bingus";
+        let jsonMessage = JSON.stringify(
+            {
+                profileID: `${user}`,
+                message_type: "post",
+                message:{
+                    text: `${text}`
+                }
+            }
+        );
+        
+        this.client.send(jsonMessage);
+    }
+    
+    SendComment(postID, text){
+        let user = "bingus";
+        let jsonMessage = JSON.stringify(
+            {
+                profileID: `${user}`,
+                message_type: "comment",
+                message:{
+                    postID: `${postID}`,
+                    text: `${text}`
+                }
+            }
+        );
+        
+        this.client.send(jsonMessage);
+    }
+    
+    SendPostLike(postID, isLike){
+        let user = "bingus";
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "post-like",
+                message:{
+                    postID: `${postID}`,
+                    isLike: `${isLike}`
+                }
+            }
+        );
+        
+        this.client.send(jsonMessage);
+    }
+    
+    SendCommentLike(commentID, isLike){
+        let user = "bingus";
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "comment-like",
+                message:{
+                    commentID: `${commentID}`,
+                    isLike: `${isLike}`
+                }
+            }
+        );
+        
+        this.client.send(jsonMessage);
+    }
+    
     SendNotice(notice){
         let jsonMessage = JSON.stringify(
             {
@@ -52,93 +138,61 @@ class WSClient extends React.Component
         this.client.send(jsonMessage);
     }
 
-    RequestLogIn(username, password){
-        let jsonMessage = JSON.stringify(
-            {
-                message_type: "login",
-                message:{
-                    username: username,
-                    password: password
+    RecieveMessage(received){
+        switch (received.message_type){
+            case "post":
+                //Post(received.message.text, received.profileID, received.postID);
+                break;
+
+            case "comment":
+                //PostComment(received.message.text, received.message.postID, received.profileID, received.commentID);
+                break;
+
+            case "post-like":
+                if (received.messsge.isLike){
+                    //LikePost(received.message.postID);
                 }
-            }
-        );
-
-        this.client.send(jsonMessage);
-    }
-
-    RequestPostHistory(){
-        let jsonMessage = JSON.stringify(
-            {
-                message_type: "post-history"
-            }
-        )
-
-        this.client.send(jsonMessage);
-    }
-
-    SendPost(text){
-        let user = "bingus";
-        let jsonMessage = JSON.stringify(
-            {
-                user: `${user}`,
-                message_type: "post",
-                message:{
-                    text: `${text}`
+                else{
+                    //DislikePost(received.message.postID);
                 }
-            }
-        );
+                break;
 
-        this.client.send(jsonMessage);
-    }
-
-    SendComment(postID, text){
-        let user = "bingus";
-        let jsonMessage = JSON.stringify(
-            {
-                user: `${user}`,
-                message_type: "comment",
-                message:{
-                    postID: `${postID}`,
-                    text: `${text}`
+            case "comment-like":
+                if (received.messsge.isLike){
+                    //LikeComment(received.message.commentID);
                 }
-            }
-        );
-
-        this.client.send(jsonMessage);
-    }
-
-    SendPostLike(postID, value){
-        let user = "bingus";
-        let jsonMessage = JSON.stringify(
-            {
-                user: `${user}`,
-                message_type: "post-like",
-                message:{
-                    postID: `${postID}`,
-                    value: `${value}`
+                else{
+                    //DislikeComment(received.message.commentID);
                 }
-            }
-        );
+                break;
 
-        this.client.send(jsonMessage);
-    }
-
-    SendCommentLike(commentID, value){
-        let user = "bingus";
-        let jsonMessage = JSON.stringify(
-            {
-                user: `${user}`,
-                message_type: "comment-like",
-                message:{
-                    commentID: `${commentID}`,
-                    value: `${value}`
+            case "login":
+                if (received.profileID != null){
+                    //SetUserID(received.profileID);
                 }
-            }
-        );
+                else {
+                    console.log("login failed");
+                    //handle login retry
+                }
+                break;
 
-        this.client.send(jsonMessage);
+            case "post-history":
+                received.postHistoryList.forEach(post => {
+                    //Post(post.message.text, post.profileID, post.postID);
+                });
+                break;
+
+            case "notice":
+                console.log(received.message);
+                return;
+
+            default:
+                console.log(`invalid server interaction: ${received}`);
+                return;
+        }
+
+        console.log(received);
     }
-
 }
 
 

@@ -70,85 +70,89 @@ class WSServer
   }
   
   static broadcast(broadcastObject){
+    const message = JSON.stringify(broadcastObject);
     Object.keys(WSServer.connections).forEach((uuid) => {
       const connection = WSServer.connections[uuid];
-      const message = JSON.stringify(broadcastObject);
       connection.send(message);
-      console.log(message);
     });
+
+    console.log("broadcast:");
+    console.log(broadcastObject);
   }
 
   static MonoSend(sentObject, uuid){
-      const connection = WSServer.connections[uuid];
-      const message = JSON.stringify(sentObject);
-      connection.send(message);
-      console.log(message);
+    const connection = WSServer.connections[uuid];
+    const message = JSON.stringify(sentObject);
+    connection.send(message);
   }
   
 
-  static GetServerResponse(resived, uuid){
+  static GetServerResponse(received, uuid){
 
-    switch (resived.message_type){
+    switch (received.message_type){
       case "post":
-        resived.message.user; // the user who posted
-        resived.message.text; // the post itself
+        received.user; // the user who posted
+        received.message.text; // the post itself
         // database stuff here
         
         let postID = null; // the new posts ID
 
-        resived.postID = postID;
-        return resived;
+        received.postID = postID;
+        return received;
 
       case "comment":
-        resived.message.user; // the user who commented
-        resived.message.postID; // the ID of the post that is being commented on
-        resived.message.text; // the comment itself
+        received.user; // the user who commented
+        received.message.postID; // the ID of the post that is being commented on
+        received.message.text; // the comment itself
         // database stuff here
         
         let commentID = null; // the new comments ID
 
-        resived.commentID = commentID;
-        return resived;
+        received.commentID = commentID;
+        return received;
 
       case "post-like":
-        resived.message.user; // the user who liked
-        resived.message.value; //1 if it's a like, -1 if it's a dislike
-        resived.message.postID; // the liked posts ID
+        received.user; // the user who liked
+        received.message.value; //1 if it's a like, -1 if it's a dislike
+        received.message.postID; // the liked posts ID
         // database stuff here
-        return resived;
+        return received;
 
       case "comment-like":
-        resived.message.user; // the user who liked
-        resived.message.value; // 1 if it's a like, -1 if it's a dislike
-        resived.message.commentID; // the liked comments ID
+        received.user; // the user who liked
+        received.message.value; // 1 if it's a like, -1 if it's a dislike
+        received.message.commentID; // the liked comments ID
         // database stuff here
-        return resived;
+        return received;
 
       case "login":
-        resived.message.username; // the username
-        resived.message.password; // the password
+        received.message.username; // the username
+        received.message.password; // the password
         // database stuff here
 
-        let validLogin = false; // bool descriping wether the login was a success
-
-        resived.validLogin = validLogin;
-        this.MonoSend(resived, uuid);
+        received.profileID = null; // the profileID, set to null if login failed
+        this.MonoSend(received, uuid);
         break;
 
       case "post-history":
         // database stuff here
 
         let postHistoryList = [];
-
-        this.MonoSend(postHistoryList, uuid);
+        let responds = 
+        {
+          message_type: "post-history",
+          postHistoryList
+        }
+        this.MonoSend(responds, uuid);
         break;
 
       case "notice":
-        console.log(resived.message);
+        console.log(received.message);
+        this.MonoSend(received, uuid);
         break;
 
       default:
-        console.log("invalid server interaction");
+        console.log(`invalid server interaction: ${received}`);
         break;
     }
 
