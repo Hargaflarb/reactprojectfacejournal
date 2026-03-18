@@ -53,7 +53,7 @@ class WSClient extends React.Component
     }
 
     SendPost(text){
-        let user = "bingus";
+        let user = 1;
         let jsonMessage = JSON.stringify(
             {
                 user: `${user}`,
@@ -114,6 +114,7 @@ class WSClient extends React.Component
 
         this.client.send(jsonMessage);
     }
+
 
 }
 

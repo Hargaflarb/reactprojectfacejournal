@@ -79,37 +79,34 @@ class WSServer
 
   
 
-  static GetServerResponse(resived){
+  static GetServerResponse(received){
 
-    switch (resived.message_type){
+    switch (received.message_type){
         case "post":
-          resived.message.user; // the user who posted
-          resived.message.text; // the post itself
-          // database stuff here
-          let postID = null; // the new posts ID
-
-          resived.postID = postID;
+          testQuery();
+          let id = addPostQuery(received.user, received.message.text);
+          received.postID = null; // the new posts ID
           break;
         case "comment":
-          resived.message.user; // the user who commented
-          resived.message.postID; // the ID of the post that is being commented on
-          resived.message.text; // the comment itself
+          received.message.user; // the user who commented
+          received.message.postID; // the ID of the post that is being commented on
+          received.message.text; // the comment itself
           // database stuff here
           let commentID = null; // the new comments ID
 
 
-          resived.commentID = commentID;
+          received.commentID = commentID;
           break;
         case "post-like":
-          resived.message.user; // the user who liked
-          resived.message.value; //1 if it's a like, -1 if it's a dislike
-          resived.message.postID; // the liked posts ID
+          received.message.user; // the user who liked
+          received.message.value; //1 if it's a like, -1 if it's a dislike
+          received.message.postID; // the liked posts ID
           // database stuff here
           break;
         case "comment-like":
-          resived.message.user; // the user who liked
-          resived.message.value; // 1 if it's a like, -1 if it's a dislike
-          resived.message.commentID; // the liked comments ID
+          received.message.user; // the user who liked
+          received.message.value; // 1 if it's a like, -1 if it's a dislike
+          received.message.commentID; // the liked comments ID
           // database stuff here
           break;
         default:
@@ -117,12 +114,12 @@ class WSServer
           break;
       }
       
-      return resived;
+      return received;
   }
 }
 
 
-//WSServer.StartServer();
+WSServer.StartServer();
 
 
 

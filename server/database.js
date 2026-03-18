@@ -17,8 +17,7 @@ async function testQuery() {
         console.log("Trying");
         await sql.connect(sqlConfig);
         console.log("Trying harder")
-        //const result = await sql.query(`insert into Profile VALUES ('John', 'John2')`);
-        const result = await sql.query(`select * from Profile where ProfileID = ${1}`)
+        const result = await sql.query(`insert into Profile VALUES ('John', 'John2')`);
         console.dir(result);
     } catch (err) {
         console.error(err);
@@ -27,14 +26,16 @@ async function testQuery() {
 }
 
 async function addPostQuery(profileID, text) {
+    let result;
     try {
         await sql.connect(sqlConfig);
-        const result = await sql.query(`INSERT INTO Post VALUES ('${profileID, text})`);
+        result = await sql.query(`INSERT INTO Post VALUES ('${profileID}', '${text}', '0', '0')`);
         console.dir(result);
     }
     catch (err) {
         console.error(err);
     }
+    //return result.postID
 }
 
 async function addCommentQuery(profileID, text, postID) {
