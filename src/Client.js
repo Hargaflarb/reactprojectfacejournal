@@ -1,6 +1,7 @@
 import React from 'react';
 import './index.css';
-
+import AppFunctions from './App.js'
+import Sendshit from './SendTest'
 
 class WSClient extends React.Component
 {
@@ -139,9 +140,12 @@ class WSClient extends React.Component
     }
 
     RecieveMessage(received){
+        // let appFunc = AppFunctions({client: this});
+        let appFunc = {};
         switch (received.message_type){
             case "post":
-                //Post(received.message.text, received.profileID, received.postID);
+                Sendshit({client: this, received: received, doSend: true});
+                // appFunc.OnServerPost("notin", received.profileID, received.message.text);// received.postID);
                 break;
 
             case "comment":
@@ -194,6 +198,5 @@ class WSClient extends React.Component
         console.log(received);
     }
 }
-
 
 export default WSClient;

@@ -4,8 +4,32 @@ import ReactDOM from 'react-dom/client';
 import React, { useState } from 'react';
 
 
-function App() {
-  const [allPosts,setPosts]=useState([TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()]);
+function App(props) {
+  let func = AppFunctions(props);
+
+  return (
+    <>
+    <div id="sidebar"><h2>Sidebar</h2></div>
+    <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={func.onAddPostClick}><b>+</b></button></div>
+    <div id="feed">
+      {
+        func.allPosts.map((post)=>
+          <Post
+            key={MakeRandomID(10)}
+            title={post.title}
+            posterUserName={post.posterUserName}
+            text={post.text}
+          />
+        )
+      }
+    </div>
+    </>
+  );
+}
+
+function AppFunctions(props){
+  const [allPosts, setPosts] = useState([TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()]);
+  
 
   function CreatePostPopup()
   {
@@ -27,39 +51,30 @@ function App() {
     </React.StrictMode>
     );
   }
+
   function ExtractText(postDocument){
     let title=postDocument.getElementById("titleTextbox").value;
     let text=postDocument.getElementById("contentTextbox").value;
     window.open("","newPostWindow").close();
-    SubmitNewPost(title,"username",text);
+    PostToServer(title,"username",text);
+    // SubmitNewPost(title,"username",text);
+  }
+
+  function PostToServer(postTitle, user, message){
+    props.client.SendPost(message);
   }
 
   function SubmitNewPost(postTitle,user,message)
   {
-  let newPost={ title:postTitle, posterUserName:user, text:message}
-  console.log("button pressed!");
-  setPosts(prevPosts=>[newPost,...prevPosts]);
+    let newPost={ title:postTitle, posterUserName:user, text:message}
+    console.log("button pressed!");
+    setPosts(prevPosts=>[newPost,...prevPosts]);
   }
 
-  return (
-    <>
-    <div id="sidebar"><h2>Sidebar</h2></div>
-    <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={CreatePostPopup}><b>+</b></button></div>
-    <div id="feed">
-      {
-        allPosts.map((post)=>
-          <Post
-            key={MakeRandomID(10)}
-            title={post.title}
-            posterUserName={post.posterUserName}
-            text={post.text}
-          />
-        )
-      }
-    </div>
-    </>
-  );
+
+  return {allPosts: allPosts, onAddPostClick: CreatePostPopup, OnServerPost: SubmitNewPost}
 }
+
 
 function Post(props){
   return(
