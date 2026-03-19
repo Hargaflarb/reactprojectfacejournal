@@ -11,6 +11,8 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "msnodesqlv8": "^5.1.5",
+    "mssql": "^12.2.0",
     "uuid": "^13.0.0",
     "ws": "^8.19.0"
   }
