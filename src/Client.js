@@ -1,6 +1,6 @@
 import React from 'react';
 import './index.css';
-
+import App from './App';
 
 class WSClient extends React.Component
 {
@@ -9,7 +9,7 @@ class WSClient extends React.Component
         this.state = {
 
         };
-
+        this.app = null;
         this.SendPost = this.SendPost.bind(this);
         this.render = this.render.bind(this);
         //this.SendConnectionNotice = this.SendConnectionNotice.bind(this);
@@ -17,6 +17,11 @@ class WSClient extends React.Component
 
     render(){
         return <h1>no</h1>
+    }
+
+    ReferanceExchange(app){
+        this.app = app;
+        return this;
     }
 
     ConnectToServer(){
@@ -142,6 +147,7 @@ class WSClient extends React.Component
         switch (received.message_type){
             case "post":
                 //Post(received.message.text, received.profileID, received.postID);
+                this.app.SubmitNewPost("notin", received.profileID, received.message.text);
                 break;
 
             case "comment":
