@@ -9,7 +9,7 @@ class App extends React.Component{
     super(props);
     this.state = {
       allPosts:[
-        TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()
+        // TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()
       ],
       client: props.client.ReferanceExchange(this)
     }
@@ -46,10 +46,50 @@ class App extends React.Component{
     this.state.client.SendPost(text);
   }
 
-  SubmitNewPost(postTitle,user,message){
-    let newPost={ title:postTitle, posterUserName:user, text:message};
+  //likes and dislikes
+  MakePostInteraction(postID, isLike){
+    this.state.client.SendPostLike(postID, isLike);
+  }
+
+
+  SubmitNewPost(user,postID,postTitle,message){
+    let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:0, dislikes:0};
     this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
   }
+
+  // SubmitNewComment(postTitle,user,message){ //not functional
+  //   let newPost={ title:postTitle, posterUserName:user, text:message, likes:0, dislikes:0};
+  //   this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
+  // }
+
+  // SubmitLikePost(postID){ //outdated
+  //   let index = this.state.allPosts.findIndex((post)=>post.postID==postID);
+  //   let newObj = this.state.allPosts[index];
+  //   newObj.likes += 1
+  //   this.setState({allPosts: this.state.allPosts.with(index, newObj)});
+  // }
+
+  SubmitPostInteraction(postID, isLike){
+    if (isLike){
+      this.state.allPosts.find((post)=>post.postID==postID).likes += 1;
+    }
+    else{
+      this.state.allPosts.find((post)=>post.postID==postID).dislikes += 1;
+    }
+    this.setState({allPosts: this.state.allPosts});
+  }
+
+  Post(props){
+    return(
+    <div className="post">
+      <h4>{props.posterUserName}</h4>
+      <h3>{props.title}</h3>
+      <p>{props.text}</p>
+      <button onClick={()=>{this.MakePostInteraction(props.key, true)}}>likes: {props.likes}</button> | <button onClick={()=>{this.MakePostInteraction(props.key, false)}}>dislikes: {props.dislikes}</button>
+    </div>);
+  }
+
+
 
   render(){
     return (<>
@@ -57,12 +97,14 @@ class App extends React.Component{
       <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={this.CreatePostPopup}><b>+</b></button></div>
       <div id="feed">{
         this.state.allPosts.map((post)=>
-          <Post
-            key={MakeRandomID(10)}
-            title={post.title}
-            posterUserName={post.posterUserName}
-            text={post.text}
-          />
+          this.Post({
+            key:post.postID,
+            title:post.title,
+            posterUserName:post.posterUserName,
+            text:post.text,
+            likes:post.likes,
+            dislikes:post.dislikes,
+          })
         )
       }
       </div>
@@ -71,16 +113,10 @@ class App extends React.Component{
 }
 
 
-function Post(props){
-  return(
-  <div className="post">
-    <h3>{props.title}</h3>
-    <h4>{props.posterUserName}</h4>
-    <p>{props.text}</p>
-  </div>)}
 
-  function TemplatePost(){
-  return { title:"Temp Title", 
+function TemplatePost(){
+  return {
+    title:"Temp Title", 
     posterUserName:"Temp user", 
     text:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
   }

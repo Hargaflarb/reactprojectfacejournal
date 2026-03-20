@@ -48,7 +48,7 @@ class WSServer
   }
 
   static handleMessage(bytes, uuid){
-    const message = JSON.parse(bytes.toString());
+    const message = JSON.parse(bytes.toString()); 
     const user = WSServer.users[uuid];
 
     const responds = this.GetServerResponse(message, uuid);
@@ -95,7 +95,7 @@ class WSServer
         received.message.text; // the post itself
         // database stuff here
         
-        let postID = null; // the new posts ID
+        let postID = 1; // the new posts ID
 
         received.postID = postID;
         return received;

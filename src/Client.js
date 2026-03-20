@@ -35,7 +35,7 @@ class WSClient extends React.Component
         });
         
         this.client.addEventListener("message", event => {
-            this.RecieveMessage(JSON.parse(event.data));
+            this.RecieveMessage(JSON.parse(event.data.toString()));
             // console.log("Message from server: ", event.data);
         });
 
@@ -88,11 +88,11 @@ class WSClient extends React.Component
         let user = "bingus";
         let jsonMessage = JSON.stringify(
             {
-                profileID: `${user}`,
+                profileID: user,
                 message_type: "comment",
                 message:{
-                    postID: `${postID}`,
-                    text: `${text}`
+                    postID: postID,
+                    text: text
                 }
             }
         );
@@ -106,8 +106,8 @@ class WSClient extends React.Component
             {
                 message_type: "post-like",
                 message:{
-                    postID: `${postID}`,
-                    isLike: `${isLike}`
+                    postID: postID,
+                    isLike: isLike
                 }
             }
         );
@@ -121,8 +121,8 @@ class WSClient extends React.Component
             {
                 message_type: "comment-like",
                 message:{
-                    commentID: `${commentID}`,
-                    isLike: `${isLike}`
+                    commentID: commentID,
+                    isLike: isLike
                 }
             }
         );
@@ -144,10 +144,11 @@ class WSClient extends React.Component
     }
 
     RecieveMessage(received){
+        // console.log(received);
         switch (received.message_type){
             case "post":
                 //Post(received.message.text, received.profileID, received.postID);
-                this.app.SubmitNewPost("notin", received.profileID, received.message.text);
+                this.app.SubmitNewPost(received.profileID, received.postID, "notin",  received.message.text);
                 break;
 
             case "comment":
@@ -155,12 +156,7 @@ class WSClient extends React.Component
                 break;
 
             case "post-like":
-                if (received.messsge.isLike){
-                    //LikePost(received.message.postID);
-                }
-                else{
-                    //DislikePost(received.message.postID);
-                }
+                this.app.SubmitPostInteraction(received.message.postID, received.message.isLike);
                 break;
 
             case "comment-like":
@@ -185,6 +181,7 @@ class WSClient extends React.Component
             case "post-history":
                 received.postHistoryList.forEach(post => {
                     //Post(post.message.text, post.profileID, post.postID);
+                    this.app.SubmitNewPost(post.profileID, post.postID, "notin", post.message.text);
                 });
                 break;
 
