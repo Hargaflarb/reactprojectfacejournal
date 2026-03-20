@@ -71,63 +71,6 @@ class App extends React.Component{
 }
 
 
-// function App() {
-//   const [allPosts,setPosts]=useState([TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()]);
-
-//   function CreatePostPopup()
-//   {
-//     let postWindow=window.open("","newPostWindow","width=600,height=600 popup=true");
-//     postWindow.document.body.innerHTML=("<div id='root'></div>");
-
-//     const subRoot = ReactDOM.createRoot(postWindow.document.getElementById('root'));
-//     subRoot.render(
-//       <React.StrictMode>
-//         <>
-//         <h1>New post</h1>
-//         <hr/>
-//         <input type="text" id="titleTextbox" placeholder='New Post Title'></input>
-//         <br/>
-//         <input type="text" id="contentTextbox" placeholder='Write your post here'></input>
-    
-//         <button id="submitPostBtn" onClick={()=>ExtractText(postWindow.document)}>Post</button>
-//       </>
-//     </React.StrictMode>
-//     );
-//   }
-//   function ExtractText(postDocument){
-//     let title=postDocument.getElementById("titleTextbox").value;
-//     let text=postDocument.getElementById("contentTextbox").value;
-//     window.open("","newPostWindow").close();
-//     SubmitNewPost(title,"username",text);
-//   }
-
-//   function SubmitNewPost(postTitle,user,message)
-//   {
-//   let newPost={ title:postTitle, posterUserName:user, text:message}
-//   console.log("button pressed!");
-//   setPosts(prevPosts=>[newPost,...prevPosts]);
-//   }
-
-//   return (
-//     <>
-//     <div id="sidebar"><h2>Sidebar</h2></div>
-//     <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={CreatePostPopup}><b>+</b></button></div>
-//     <div id="feed">
-//       {
-//         allPosts.map((post)=>
-//           <Post
-//             key={MakeRandomID(10)}
-//             title={post.title}
-//             posterUserName={post.posterUserName}
-//             text={post.text}
-//           />
-//         )
-//       }
-//     </div>
-//     </>
-//   );
-// }
-
 function Post(props){
   return(
   <div className="post">
