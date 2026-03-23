@@ -15,6 +15,7 @@ class App extends React.Component{
     }
 
     this.CreatePostPopup = this.CreatePostPopup.bind(this);
+    this.CreateLoginPopup = this.CreateLoginPopup.bind(this);
   }
 
   CreatePostPopup()
@@ -43,7 +44,36 @@ class App extends React.Component{
     let text=postDocument.getElementById("contentTextbox").value;
     window.open("","newPostWindow").close();
     console.log("button pressed!");
-    this.state.client.SendPost(text);
+    this.state.client.SendPost(title, text);
+  }
+
+
+  CreateLoginPopup(){
+    let logInWindow=window.open("","LogInWindow","width=600,height=600 popup=true");
+    logInWindow.document.body.innerHTML=("<div id='root'></div>");
+
+    const subRoot = ReactDOM.createRoot(logInWindow.document.getElementById('root'));
+    subRoot.render(
+      <React.StrictMode>
+        <>
+          <h1>Log in</h1>
+          <hr/>
+          <input type="text" id="usernameTextbox" placeholder='Username'></input>
+          <br/>
+          <input type="text" id="passwordTextbox" placeholder='Password'></input>
+      
+          <button id="submitLoginBtn" onClick={()=>this.ExtractLogInDetails(logInWindow.document)}>Post</button>
+        </>
+      </React.StrictMode>
+    );
+  }
+
+  ExtractLogInDetails(logInDocument){
+    let username = logInDocument.getElementById("usernameTextbox").value;
+    let password = logInDocument.getElementById("passwordTextbox").value;
+    window.open("","LogInWindow").close();
+    console.log("button pressed!");
+    this.state.client.RequestLogIn(username, password);
   }
 
   //likes and dislikes
@@ -79,6 +109,10 @@ class App extends React.Component{
     this.setState({allPosts: this.state.allPosts});
   }
 
+  
+  
+
+
   Post(props){
     return(
     <div className="post">
@@ -89,11 +123,9 @@ class App extends React.Component{
     </div>);
   }
 
-
-
   render(){
     return (<>
-      <div id="sidebar"><h2>Sidebar</h2></div>
+      <div id="sidebar"><h2>Sidebar</h2><button id="LoginBtn" onClick={this.CreateLoginPopup}><b>P</b></button></div>
       <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={this.CreatePostPopup}><b>+</b></button></div>
       <div id="feed">{
         this.state.allPosts.map((post)=>

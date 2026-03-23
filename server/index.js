@@ -98,6 +98,7 @@ class WSServer
         let postID = 1; // the new posts ID
 
         received.postID = postID;
+        received.user = this.users[received.profileID];
         return received;
 
       case "comment":
@@ -129,8 +130,8 @@ class WSServer
         received.message.username; // the username
         received.message.password; // the password
         // database stuff here
-
-        received.profileID = null; // the profileID, set to null if login failed
+        received.profileID = 1; // the profileID, set to null if login failed
+        this.users[received.profileID] = received.message.username;
         this.MonoSend(received, uuid);
         break;
 
