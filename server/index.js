@@ -91,12 +91,12 @@ class WSServer
 
     switch (received.message_type){
       case "post":
-        let postID = addPostQuery(received.user, received.message.text);
+        let postID = addPostQuery(received.profileID, received.message.text);
         postID.then(function(result){received.postID = result});
         return received;
 
       case "comment":
-        let commentID = addCommentQuery(received.user, received.message.text, received.message.postID);
+        let commentID = addCommentQuery(received.profileID, received.message.text, received.message.postID);
         commentID.then(function(result){received.commentID = result})
         return received;
 
