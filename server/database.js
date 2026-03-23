@@ -7,7 +7,7 @@ const sqlConfig = {
         trustedConnection: true,
         trustServerCertificate: true
     },
-    driver: "ODBC Driver 18 for SQL Server"
+    driver: "ODBC Driver 17 for SQL Server"
 };
 
 
