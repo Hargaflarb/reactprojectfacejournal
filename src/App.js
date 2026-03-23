@@ -15,27 +15,35 @@ class App extends React.Component{
     }
 
     this.CreatePostPopup = this.CreatePostPopup.bind(this);
+    this.InteractWithPost=this.InteractWithPost.bind(this);
   }
 
   CreatePostPopup()
   {
     let postWindow=window.open("","newPostWindow","width=600,height=600 popup=true");
     postWindow.document.body.innerHTML=("<div id='root'></div>");
-
+    postWindow.document.body.style.backgroundColor="gray";
+    postWindow.document.getElementById("root").style.height="100%";
+    postWindow.document.getElementById("root").style.width="100%";
     const subRoot = ReactDOM.createRoot(postWindow.document.getElementById('root'));
     subRoot.render(
       <React.StrictMode>
         <>
           <h1>New post</h1>
           <hr/>
-          <input type="text" id="titleTextbox" placeholder='New Post Title'></input>
+          <input type="text" id="titleTextbox" placeholder='New Post Title' style={{backgroundColor: 'light-gray'}}></input>
           <br/>
-          <input type="text" id="contentTextbox" placeholder='Write your post here'></input>
-      
-          <button id="submitPostBtn" onClick={()=>this.ExtractText(postWindow.document)}>Post</button>
+          <textarea id="contentTextbox" placeholder='Write your post here' style={{backgroundColor: 'light-gray', height:'70%',width:'98%', alignSelf:'center'}}></textarea>
+          <br/>
+          <button id="submitPostBtn" onClick={()=>this.ExtractText(postWindow.document)} style={{height:'8%', width:'20%', float:'right', fontSize:'100%'}}>Post</button>
         </>
       </React.StrictMode>
     );
+  }
+  
+  InteractWithPost(post)
+  {
+    console.log(post.title+" was clicked!");
   }
 
   ExtractText(postDocument){
@@ -62,6 +70,7 @@ class App extends React.Component{
             title={post.title}
             posterUserName={post.posterUserName}
             text={post.text}
+            onClick={()=>this.InteractWithPost(post)}
           />
         )
       }
@@ -130,10 +139,12 @@ class App extends React.Component{
 
 function Post(props){
   return(
-  <div className="post">
+  <div className="post" onClick={props.onClick}>
     <h3>{props.title}</h3>
     <h4>{props.posterUserName}</h4>
     <p>{props.text}</p>
+    <button className='likeBtn'><image/></button>
+    <button className='dislikeBtn'><image/></button>
   </div>)}
 
   function TemplatePost(){
