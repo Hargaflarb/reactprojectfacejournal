@@ -2,7 +2,7 @@
 // to start the server, write "node index.js" in the terminal, while in the server directory.
 // if you're unsure of how it works hit me up.
 
-const { testQuery, addPostQuery, sqlConfig} = require('./database.js');
+const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery} = require('./database.js');
 const { WebSocketServer } = require("ws");
 const http = require("http");
 const uuidv4 = require("uuid").v4;
@@ -83,31 +83,20 @@ class WSServer
 
     switch (received.message_type){
         case "post":
-          testQuery();
-          let id = addPostQuery(received.user, received.message.text);
-          received.postID = null; // the new posts ID
+          //testQuery();
+          let postID = addPostQuery(received.user, received.message.text);
+          postID.then(function(result){received.postID = result});
           break;
         case "comment":
-          received.message.user; // the user who commented
-          received.message.postID; // the ID of the post that is being commented on
-          received.message.text; // the comment itself
-          // database stuff here
-          let commentID = null; // the new comments ID
-
-
+          let commentID = addCommentQuery(received.user, received.message.text, received.message.postID);
+          commentID.then(function(result){received.commentID = result})
           received.commentID = commentID;
           break;
         case "post-like":
-          received.message.user; // the user who liked
-          received.message.value; //1 if it's a like, -1 if it's a dislike
-          received.message.postID; // the liked posts ID
-          // database stuff here
+          likePostQuery(received.message.postID, received.message.value)
           break;
         case "comment-like":
-          received.message.user; // the user who liked
-          received.message.value; // 1 if it's a like, -1 if it's a dislike
-          received.message.commentID; // the liked comments ID
-          // database stuff here
+          likeCommentQuery(received.message.commentID, received.message.value)
           break;
         default:
         console.log("invalid server interaction");

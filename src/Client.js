@@ -68,7 +68,7 @@ class WSClient extends React.Component
     }
 
     SendComment(postID, text){
-        let user = "bingus";
+        let user = 1;
         let jsonMessage = JSON.stringify(
             {
                 user: `${user}`,
