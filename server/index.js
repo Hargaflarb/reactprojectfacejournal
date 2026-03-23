@@ -51,14 +51,15 @@ class WSServer
     const message = JSON.parse(bytes.toString());
     const user = WSServer.users[uuid];
 
-    const responds = this.GetServerResponse(message);
+    const responds = this.GetServerResponse(message, uuid);
 
     // user.state = message;
-    WSServer.broadcast(responds);
+    if (responds != null){
+      WSServer.broadcast(responds);
+    }
   
     // console.log(`${user.username} updated their state: ${JSON.stringify(responds,)}`,);
   }
-  
   
   static handleClose(uuid){
     let text = `${WSServer.users[uuid].username} disconnected`;
@@ -69,41 +70,77 @@ class WSServer
   }
   
   static broadcast(broadcastObject){
+    const message = JSON.stringify(broadcastObject);
     Object.keys(WSServer.connections).forEach((uuid) => {
       const connection = WSServer.connections[uuid];
-      const message = JSON.stringify(broadcastObject);
       connection.send(message);
-      console.log(message);
     });
+
+    console.log("broadcast:");
+    console.log(broadcastObject);
   }
 
+  static MonoSend(sentObject, uuid){
+    const connection = WSServer.connections[uuid];
+    const message = JSON.stringify(sentObject);
+    connection.send(message);
+  }
   
 
-  static GetServerResponse(received){
+  static GetServerResponse(received, uuid){
 
     switch (received.message_type){
-        case "post":
-          //testQuery();
-          let postID = addPostQuery(received.user, received.message.text);
-          postID.then(function(result){received.postID = result});
-          break;
-        case "comment":
-          let commentID = addCommentQuery(received.user, received.message.text, received.message.postID);
-          commentID.then(function(result){received.commentID = result})
-          received.commentID = commentID;
-          break;
-        case "post-like":
-          likePostQuery(received.message.postID, received.message.value)
-          break;
-        case "comment-like":
-          likeCommentQuery(received.message.commentID, received.message.value)
-          break;
-        default:
-        console.log("invalid server interaction");
-          break;
-      }
-      
-      return received;
+      case "post":
+        let postID = addPostQuery(received.user, received.message.text);
+        postID.then(function(result){received.postID = result});
+        return received;
+
+      case "comment":
+        let commentID = addCommentQuery(received.user, received.message.text, received.message.postID);
+        commentID.then(function(result){received.commentID = result})
+        return received;
+
+      case "post-like":
+        likePostQuery(received.message.postID, received.message.value)
+        return received;
+
+      case "comment-like":
+        likeCommentQuery(received.message.commentID, received.message.value)
+        return received;
+
+      case "login":
+        received.message.username; // the username
+        received.message.password; // the password
+        // database stuff here
+
+        received.profileID = null; // the profileID, set to null if login failed
+        this.MonoSend(received, uuid);
+        break;
+
+      case "post-history":
+        // database stuff here
+
+        let postHistoryList = [];
+        let responds = 
+        {
+          message_type: "post-history",
+          postHistoryList
+        }
+        this.MonoSend(responds, uuid);
+        break;
+
+      case "notice":
+        console.log(received.message);
+        this.MonoSend(received, uuid);
+        break;
+
+      default:
+        console.log(`invalid server interaction: ${received}`);
+        break;
+    }
+
+
+    return null;
   }
 }
 
