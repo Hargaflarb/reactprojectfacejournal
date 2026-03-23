@@ -93,3 +93,16 @@ h3.post:hover{
   font-size: large;
   text-align: center;
 }
+
+.likeBtn
+{
+float: right;
+height: 30px;
+width: 30px;
+}
+.dislikeBtn
+{
+float: right;
+height: 30px;
+width: 30px;
+}
