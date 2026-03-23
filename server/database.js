@@ -1,7 +1,7 @@
 const sql = require('mssql/msnodesqlv8');
 
 const sqlConfig = {
-    server: 'DESKTOP-T99PB5S\\SQLEXPRESS',
+    server: '.\\SQLEXPRESS',//'DESKTOP-T99PB5S\\SQLEXPRESS',
     database: "FaceJournal",
     options: {
         trustedConnection: true,
