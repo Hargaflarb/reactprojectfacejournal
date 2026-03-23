@@ -62,7 +62,7 @@ class App extends React.Component{
           <br/>
           <input type="text" id="passwordTextbox" placeholder='Password'></input>
       
-          <button id="submitLoginBtn" onClick={()=>this.ExtractLogInDetails(logInWindow.document)}>Post</button>
+          <button id="submitLoginBtn" onClick={()=>this.ExtractLogInDetails(logInWindow.document)}>Log In</button>
         </>
       </React.StrictMode>
     );
