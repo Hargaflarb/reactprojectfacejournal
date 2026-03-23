@@ -35,7 +35,7 @@ class WSClient extends React.Component
         });
         
         this.client.addEventListener("message", event => {
-            this.RecieveMessage(JSON.parse(event.data));
+            this.ReceiveMessage(JSON.parse(event.data));
             // console.log("Message from server: ", event.data);
         });
 
