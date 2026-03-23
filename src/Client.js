@@ -40,7 +40,7 @@ class WSClient extends React.Component
         });
         
         this.client.addEventListener("message", event => {
-            this.RecieveMessage(JSON.parse(event.data.toString()));
+            this.ReceiveMessage(JSON.parse(event.data.toString()));
             // console.log("Message from server: ", event.data);
         });
 
@@ -167,8 +167,7 @@ class WSClient extends React.Component
         this.client.send(jsonMessage);
     }
 
-    RecieveMessage(received){
-        // console.log(received);
+    ReceiveMessage(received){
         switch (received.message_type){
             case "post":
                 //Post(received.message.text, received.profileID, received.postID);
@@ -224,6 +223,7 @@ class WSClient extends React.Component
         console.log(received);
     }
 }
+
 
 
 export default WSClient;

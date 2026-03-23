@@ -2,7 +2,7 @@
 // to start the server, write "node index.js" in the terminal, while in the server directory.
 // if you're unsure of how it works hit me up.
 
-const { testQuery, addPostQuery, sqlConfig} = require('./database.js');
+const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery} = require('./database.js');
 const { WebSocketServer } = require("ws");
 const http = require("http");
 const uuidv4 = require("uuid").v4;
@@ -91,39 +91,21 @@ class WSServer
 
     switch (received.message_type){
       case "post":
-        received.user; // the user who posted
-        received.message.text; // the post itself
-        // database stuff here
-        
-        let postID = 1; // the new posts ID
-
-        received.postID = postID;
-        received.user = this.users[received.profileID];
+        let postID = addPostQuery(received.user, received.message.text);
+        postID.then(function(result){received.postID = result});
         return received;
 
       case "comment":
-        received.user; // the user who commented
-        received.message.postID; // the ID of the post that is being commented on
-        received.message.text; // the comment itself
-        // database stuff here
-        
-        let commentID = null; // the new comments ID
-
-        received.commentID = commentID;
+        let commentID = addCommentQuery(received.user, received.message.text, received.message.postID);
+        commentID.then(function(result){received.commentID = result})
         return received;
 
       case "post-like":
-        received.user; // the user who liked
-        received.message.value; //1 if it's a like, -1 if it's a dislike
-        received.message.postID; // the liked posts ID
-        // database stuff here
+        likePostQuery(received.message.postID, received.message.value)
         return received;
 
       case "comment-like":
-        received.user; // the user who liked
-        received.message.value; // 1 if it's a like, -1 if it's a dislike
-        received.message.commentID; // the liked comments ID
-        // database stuff here
+        likeCommentQuery(received.message.commentID, received.message.value)
         return received;
 
       case "login":
