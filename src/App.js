@@ -15,7 +15,7 @@ class App extends React.Component{
     }
 
     this.CreatePostPopup = this.CreatePostPopup.bind(this);
-    this.InteractWithPost=this.AddComment.bind(this);
+    this.AddComment=this.AddComment.bind(this);
   }
 
   CreatePostPopup()
