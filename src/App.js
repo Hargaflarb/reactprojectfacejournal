@@ -16,6 +16,7 @@ class App extends React.Component{
 
     this.CreatePostPopup = this.CreatePostPopup.bind(this);
     this.CreateLoginPopup = this.CreateLoginPopup.bind(this);
+    this.CreateSignUpPopup = this.CreateSignUpPopup.bind(this);
     this.InteractWithPost = this.InteractWithPost.bind(this);
   }
 
@@ -84,10 +85,10 @@ class App extends React.Component{
   }
 
   CreateSignUpPopup(){
-    let logInWindow=window.open("","SignUpWindow","width=400,height=200 popup=true");
-    logInWindow.document.body.innerHTML=("<div id='root'></div>");
+    let signUpWindow=window.open("","SignUpWindow","width=400,height=200 popup=true");
+    signUpWindow.document.body.innerHTML=("<div id='root'></div>");
 
-    const subRoot = ReactDOM.createRoot(logInWindow.document.getElementById('root'));
+    const subRoot = ReactDOM.createRoot(signUpWindow.document.getElementById('root'));
     subRoot.render(
       <React.StrictMode>
         <>
@@ -97,15 +98,15 @@ class App extends React.Component{
           <br/>
           <input type="text" id="passwordTextbox" placeholder='Password'></input>
       
-          <button id="submitSignUpBtn" onClick={()=>this.ExtractSignUpDetails(logInWindow.document)}>Sign Up</button>
+          <button id="submitSignUpBtn" onClick={()=>this.ExtractSignUpDetails(signUpWindow.document)}>Sign Up</button>
         </>
       </React.StrictMode>
     );
   }
 
-  ExtractSignUpDetails(logInDocument){
-    let username = logInDocument.getElementById("usernameTextbox").value;
-    let password = logInDocument.getElementById("passwordTextbox").value;
+  ExtractSignUpDetails(signUpWindow){
+    let username = signUpWindow.getElementById("usernameTextbox").value;
+    let password = signUpWindow.getElementById("passwordTextbox").value;
     window.open("","SignUpWindow").close();
     console.log("button pressed!");
     this.state.client.SendSignUp(username, password);

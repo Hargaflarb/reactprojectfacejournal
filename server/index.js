@@ -94,8 +94,7 @@ class WSServer
       case "post":
         let postID = await addPostQuery(received.profileID, received.message.title, received.message.text);
         received.postID = postID;
-        //await postID.then(function(result){received.postID = result; console.log("Then:" + result)});
-        console.log(received);
+        received.user = this.users[received.profileID];
         return received;
 
       case "comment":
