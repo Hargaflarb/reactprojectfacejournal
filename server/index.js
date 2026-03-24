@@ -91,7 +91,7 @@ class WSServer
 
     switch (received.message_type){
       case "post":
-        let postID = addPostQuery(received.profileID, received.message.text);
+        let postID = addPostQuery(received.profileID, received.message.title, received.message.text);
         postID.then(function(result){received.postID = result});
         return received;
 
@@ -109,6 +109,15 @@ class WSServer
         return received;
 
       case "login":
+        received.message.username; // the username
+        received.message.password; // the password
+        // database stuff here
+        received.profileID = 1; // the profileID, set to null if login failed
+        this.users[received.profileID] = received.message.username;
+        this.MonoSend(received, uuid);
+        break;
+
+      case "signup":
         received.message.username; // the username
         received.message.password; // the password
         // database stuff here

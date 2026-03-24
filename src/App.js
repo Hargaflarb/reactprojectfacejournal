@@ -19,6 +19,11 @@ class App extends React.Component{
     this.InteractWithPost = this.InteractWithPost.bind(this);
   }
 
+  InteractWithPost(post)
+  {
+    console.log(post.title+" was clicked!");
+  }
+
   CreatePostPopup()
   {
     let postWindow=window.open("","newPostWindow","width=600,height=600 popup=true");
@@ -42,11 +47,6 @@ class App extends React.Component{
     );
   }
   
-  InteractWithPost(post)
-  {
-    console.log(post.title+" was clicked!");
-  }
-
   ExtractText(postDocument){
     let title=postDocument.getElementById("titleTextbox").value;
     let text=postDocument.getElementById("contentTextbox").value;
@@ -55,9 +55,8 @@ class App extends React.Component{
     this.state.client.SendPost(title, text);
   }
 
-
   CreateLoginPopup(){
-    let logInWindow=window.open("","LogInWindow","width=600,height=600 popup=true");
+    let logInWindow=window.open("","LogInWindow","width=400,height=200 popup=true");
     logInWindow.document.body.innerHTML=("<div id='root'></div>");
 
     const subRoot = ReactDOM.createRoot(logInWindow.document.getElementById('root'));
@@ -84,6 +83,35 @@ class App extends React.Component{
     this.state.client.RequestLogIn(username, password);
   }
 
+  CreateSignUpPopup(){
+    let logInWindow=window.open("","SignUpWindow","width=400,height=200 popup=true");
+    logInWindow.document.body.innerHTML=("<div id='root'></div>");
+
+    const subRoot = ReactDOM.createRoot(logInWindow.document.getElementById('root'));
+    subRoot.render(
+      <React.StrictMode>
+        <>
+          <h1>Sign Up</h1>
+          <hr/>
+          <input type="text" id="usernameTextbox" placeholder='Username'></input>
+          <br/>
+          <input type="text" id="passwordTextbox" placeholder='Password'></input>
+      
+          <button id="submitSignUpBtn" onClick={()=>this.ExtractSignUpDetails(logInWindow.document)}>Sign Up</button>
+        </>
+      </React.StrictMode>
+    );
+  }
+
+  ExtractSignUpDetails(logInDocument){
+    let username = logInDocument.getElementById("usernameTextbox").value;
+    let password = logInDocument.getElementById("passwordTextbox").value;
+    window.open("","SignUpWindow").close();
+    console.log("button pressed!");
+    this.state.client.SendSignUp(username, password);
+  }
+
+
   //likes and dislikes
   MakePostInteraction(postID, isLike){
     this.state.client.SendPostLike(postID, isLike);
@@ -99,6 +127,17 @@ class App extends React.Component{
   //   let newPost={ title:postTitle, posterUserName:user, text:message, likes:0, dislikes:0};
   //   this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
   // }
+
+  SubmitCommentInteraction(commentID, isLike){
+    if (isLike){
+      this.state.allPosts.find((post)=>post.postID==postID).likes += 1;
+    }
+    else{
+      this.state.allPosts.find((post)=>post.postID==postID).dislikes += 1;
+    }
+    this.setState({allPosts: this.state.allPosts});
+  }
+
 
   // SubmitLikePost(postID){ //outdated
   //   let index = this.state.allPosts.findIndex((post)=>post.postID==postID);
@@ -133,7 +172,10 @@ class App extends React.Component{
 
   render(){
     return (<>
-      <div id="sidebar"><h2>Sidebar</h2><button id="LoginBtn" onClick={this.CreateLoginPopup}><b>P</b></button></div>
+      <div id="sidebar"><h2>Sidebar</h2>
+        <button id="LoginBtn" onClick={this.CreateLoginPopup}><b>P</b></button>
+        <button id="SignUpBtn" onClick={this.CreateSignUpPopup}><b>N</b></button>
+      </div>
       <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={this.CreatePostPopup}><b>+</b></button></div>
       <div id="feed">{
         this.state.allPosts.map((post)=>
