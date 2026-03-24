@@ -2,7 +2,7 @@
 // to start the server, write "node index.js" in the terminal, while in the server directory.
 // if you're unsure of how it works hit me up.
 
-const { testQuery, addPostQuery, sqlConfig} = require('./database.js');
+const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery} = require('./database.js');
 const { WebSocketServer } = require("ws");
 const http = require("http");
 const uuidv4 = require("uuid").v4;
@@ -47,11 +47,12 @@ class WSServer
 
   }
 
-  static handleMessage(bytes, uuid){
-    const message = JSON.parse(bytes.toString());
+  static async handleMessage(bytes, uuid){
+    const message = JSON.parse(bytes.toString()); 
     const user = WSServer.users[uuid];
 
-    const responds = this.GetServerResponse(message, uuid);
+    const responds = await this.GetServerResponse(message, uuid);
+
 
     // user.state = message;
     if (responds != null){
@@ -87,50 +88,43 @@ class WSServer
   }
   
 
-  static GetServerResponse(received, uuid){
+  static async GetServerResponse(received, uuid){
 
     switch (received.message_type){
       case "post":
-        received.user; // the user who posted
-        received.message.text; // the post itself
-        // database stuff here
-        
-        let postID = null; // the new posts ID
-
+        let postID = await addPostQuery(received.profileID, received.message.title, received.message.text);
         received.postID = postID;
+        received.user = this.users[received.profileID];
         return received;
 
       case "comment":
-        received.user; // the user who commented
-        received.message.postID; // the ID of the post that is being commented on
-        received.message.text; // the comment itself
-        // database stuff here
-        
-        let commentID = null; // the new comments ID
-
-        received.commentID = commentID;
+        let commentID = addCommentQuery(received.profileID, received.message.text, received.message.postID);
+        commentID.then(function(result){received.commentID = result})
         return received;
 
       case "post-like":
-        received.user; // the user who liked
-        received.message.value; //1 if it's a like, -1 if it's a dislike
-        received.message.postID; // the liked posts ID
-        // database stuff here
+        likePostQuery(received.message.postID, received.message.isLike)
         return received;
 
       case "comment-like":
-        received.user; // the user who liked
-        received.message.value; // 1 if it's a like, -1 if it's a dislike
-        received.message.commentID; // the liked comments ID
-        // database stuff here
+        likeCommentQuery(received.message.commentID, received.message.isLike)
         return received;
 
       case "login":
         received.message.username; // the username
         received.message.password; // the password
         // database stuff here
+        received.profileID = 1; // the profileID, set to null if login failed
+        this.users[received.profileID] = received.message.username;
+        this.MonoSend(received, uuid);
+        break;
 
-        received.profileID = null; // the profileID, set to null if login failed
+      case "signup":
+        received.message.username; // the username
+        received.message.password; // the password
+        // database stuff here
+        received.profileID = 1; // the profileID, set to null if login failed
+        this.users[received.profileID] = received.message.username;
         this.MonoSend(received, uuid);
         break;
 

@@ -9,14 +9,18 @@ class App extends React.Component{
     super(props);
     this.state = {
       allPosts:[
-        TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()
+        // TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()
       ],
       client: props.client.ReferanceExchange(this)
     }
 
     this.CreatePostPopup = this.CreatePostPopup.bind(this);
     this.AddComment=this.AddComment.bind(this);
+    this.CreateLoginPopup = this.CreateLoginPopup.bind(this);
+    this.CreateSignUpPopup = this.CreateSignUpPopup.bind(this);
+    this.InteractWithPost = this.InteractWithPost.bind(this);
   }
+
 
   CreatePostPopup()
   {
@@ -41,6 +45,7 @@ class App extends React.Component{
     );
   }
   
+
   AddComment(post,text)
   {
     console.log(post.title+" was commented on by (username)");
@@ -52,27 +57,142 @@ class App extends React.Component{
     let title=postDocument.getElementById("titleTextbox").value;
     let text=postDocument.getElementById("contentTextbox").value;
     window.open("","newPostWindow").close();
-    this.state.client.SendPost(text);
+    console.log("button pressed!");
+    this.state.client.SendPost(title, text);
   }
 
-  SubmitNewPost(postTitle,user,message){
-    let newPost={ title:postTitle, posterUserName:user, text:message};
+  CreateLoginPopup(){
+    let logInWindow=window.open("","LogInWindow","width=400,height=200 popup=true");
+    logInWindow.document.body.innerHTML=("<div id='root'></div>");
+
+    const subRoot = ReactDOM.createRoot(logInWindow.document.getElementById('root'));
+    subRoot.render(
+      <React.StrictMode>
+        <>
+          <h1>Log in</h1>
+          <hr/>
+          <input type="text" id="usernameTextbox" placeholder='Username'></input>
+          <br/>
+          <input type="text" id="passwordTextbox" placeholder='Password'></input>
+      
+          <button id="submitLoginBtn" onClick={()=>this.ExtractLogInDetails(logInWindow.document)}>Log In</button>
+        </>
+      </React.StrictMode>
+    );
+  }
+
+  ExtractLogInDetails(logInDocument){
+    let username = logInDocument.getElementById("usernameTextbox").value;
+    let password = logInDocument.getElementById("passwordTextbox").value;
+    window.open("","LogInWindow").close();
+    console.log("button pressed!");
+    this.state.client.RequestLogIn(username, password);
+  }
+
+  CreateSignUpPopup(){
+    let signUpWindow=window.open("","SignUpWindow","width=400,height=200 popup=true");
+    signUpWindow.document.body.innerHTML=("<div id='root'></div>");
+
+    const subRoot = ReactDOM.createRoot(signUpWindow.document.getElementById('root'));
+    subRoot.render(
+      <React.StrictMode>
+        <>
+          <h1>Sign Up</h1>
+          <hr/>
+          <input type="text" id="usernameTextbox" placeholder='Username'></input>
+          <br/>
+          <input type="text" id="passwordTextbox" placeholder='Password'></input>
+      
+          <button id="submitSignUpBtn" onClick={()=>this.ExtractSignUpDetails(signUpWindow.document)}>Sign Up</button>
+        </>
+      </React.StrictMode>
+    );
+  }
+
+  ExtractSignUpDetails(signUpWindow){
+    let username = signUpWindow.getElementById("usernameTextbox").value;
+    let password = signUpWindow.getElementById("passwordTextbox").value;
+    window.open("","SignUpWindow").close();
+    console.log("button pressed!");
+    this.state.client.SendSignUp(username, password);
+  }
+
+
+  //likes and dislikes
+  MakePostInteraction(postID, isLike){
+    this.state.client.SendPostLike(postID, isLike);
+  }
+
+
+  SubmitNewPost(user,postID,postTitle,message){
+    let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:0, dislikes:0};
     this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
+  }
+
+  // SubmitNewComment(postTitle,user,message){ //not functional
+  //   let newPost={ title:postTitle, posterUserName:user, text:message, likes:0, dislikes:0};
+  //   this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
+  // }
+
+  SubmitCommentInteraction(commentID, isLike){
+    if (isLike){
+      this.state.allPosts.find((comment)=>comment.commentID==commentID).likes += 1;
+    }
+    else{
+      this.state.allPosts.find((comment)=>comment.commentID==commentID).dislikes += 1;
+    }
+    //this.setState({allPosts: this.state.allPosts});
+  }
+
+
+  // SubmitLikePost(postID){ //outdated
+  //   let index = this.state.allPosts.findIndex((post)=>post.postID==postID);
+  //   let newObj = this.state.allPosts[index];
+  //   newObj.likes += 1
+  //   this.setState({allPosts: this.state.allPosts.with(index, newObj)});
+  // }
+
+  SubmitPostInteraction(postID, isLike){
+    if (isLike){
+      this.state.allPosts.find((post)=>post.postID==postID).likes += 1;
+    }
+    else{
+      this.state.allPosts.find((post)=>post.postID==postID).dislikes += 1;
+    }
+    this.setState({allPosts: this.state.allPosts});
+  }
+
+  
+  
+
+
+  Post(props){
+    return(
+    <div className="post">
+      <h4>{props.posterUserName}</h4>
+      <h3>{props.title}</h3>
+      <p>{props.text}</p>
+      <button onClick={()=>{this.MakePostInteraction(props.key, true)}}>likes: {props.likes}</button> | <button onClick={()=>{this.MakePostInteraction(props.key, false)}}>dislikes: {props.dislikes}</button>
+    </div>);
   }
 
   render(){
     return (<>
-      <div id="sidebar"><h2>Sidebar</h2></div>
+      <div id="sidebar"><h2>Sidebar</h2>
+        <button id="LoginBtn" onClick={this.CreateLoginPopup}><b>P</b></button>
+        <button id="SignUpBtn" onClick={this.CreateSignUpPopup}><b>N</b></button>
+      </div>
       <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={this.CreatePostPopup}><b>+</b></button></div>
       <div id="feed">{
         this.state.allPosts.map((post)=>
-          <Post
-            key={MakeRandomID(10)}
-            title={post.title}
-            posterUserName={post.posterUserName}
-            text={post.text}
-            addComment={()=>this.AddComment(post)}
-          />
+          this.Post({
+            key:post.postID,
+            title:post.title,
+            posterUserName:post.posterUserName,
+            text:post.text,
+            likes:post.likes,
+            dislikes:post.dislikes,
+          })
         )
       }
       </div>
@@ -81,38 +201,6 @@ class App extends React.Component{
 }
 
 
-function Post(props){
-  return(<>
-  <div className="post" id={props.key}>
-    <h3>{props.title}</h3>
-    <h4>{props.posterUserName}</h4>
-    <p>{props.text}</p>
-    <div className='commentOptions'>
-      <button className='viewCommentsBtn'>View Comments</button>
-      <textarea className='newCommentField' placeholder='Comment...'/>
-      <button className='submitCommentBtn' onClick={props.addComment}>Submit</button>
-      <div className='comments'></div>
-    </div>
-  </div>
-  </>
-  )}
-
-  function TemplatePost(){
-  return { title:"Temp Title", 
-    posterUserName:"Temp user", 
-    text:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-  }
-}
-
-//temp id maker, feel free to remove, doesn't make unique ids
-function MakeRandomID(length){
-let result='';
-let characters='QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwertyuiopasdfghjklzxcvbnm';
-for (let i=0;i<length;i++){
-  result += characters.charAt(Math.floor(Math.random()*characters.length));
-}
-return result;
-}
 
 function Comment(props){
   return(

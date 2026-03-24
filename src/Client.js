@@ -10,6 +10,11 @@ class WSClient extends React.Component
 
         };
         this.app = null;
+        this.isLoggedIn = false;
+        this.profile = {
+            username: "",
+            profileID: null
+        };
         this.SendPost = this.SendPost.bind(this);
         this.render = this.render.bind(this);
         //this.SendConnectionNotice = this.SendConnectionNotice.bind(this);
@@ -35,7 +40,7 @@ class WSClient extends React.Component
         });
         
         this.client.addEventListener("message", event => {
-            this.RecieveMessage(JSON.parse(event.data));
+            this.ReceiveMessage(JSON.parse(event.data.toString()));
             // console.log("Message from server: ", event.data);
         });
 
@@ -44,8 +49,26 @@ class WSClient extends React.Component
         });
     }
 
+
+    SendSignUp(username, password){
+        this.profile.username = username; //not logged in yet
+
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "signup",
+                message:{
+                    username: username,
+                    password: password
+                }
+            }
+        );
+        
+        this.client.send(jsonMessage);
+    }
     
     RequestLogIn(username, password){
+        this.profile.username = username; //not logged in yet
+
         let jsonMessage = JSON.stringify(
             {
                 message_type: "login",
@@ -69,65 +92,83 @@ class WSClient extends React.Component
         this.client.send(jsonMessage);
     }
     
-    SendPost(text){
-        let user = "bingus";
-        let jsonMessage = JSON.stringify(
-            {
-                profileID: `${user}`,
-                message_type: "post",
-                message:{
-                    text: `${text}`
+    SendPost(title, text){
+        if (this.profile.profileID != null){
+            let jsonMessage = JSON.stringify(
+                {
+                    profileID: this.profile.profileID,
+                    
+                    message_type: "post",
+                    message:{
+                        title: `${title}`,
+                        text: `${text}`
+                    }
                 }
-            }
-        );
-        
-        this.client.send(jsonMessage);
+            );
+            
+            this.client.send(jsonMessage);
+            return true;
+        }
+        console.log("must be logged in.");
+        return false;
     }
     
     SendComment(postID, text){
-        let user = "bingus";
-        let jsonMessage = JSON.stringify(
-            {
-                profileID: `${user}`,
-                message_type: "comment",
-                message:{
-                    postID: `${postID}`,
-                    text: `${text}`
+        if (this.profile.profileID != null){
+            let jsonMessage = JSON.stringify(
+                {
+                    profileID: this.profile.profileID,
+                    message_type: "comment",
+                    message:{
+                        postID: postID,
+                        text: text
+                    }
                 }
-            }
-        );
-        
-        this.client.send(jsonMessage);
+            );
+            
+            this.client.send(jsonMessage);
+            return true;
+        }
+        console.log("must be logged in.");
+        return false;
     }
     
     SendPostLike(postID, isLike){
-        let user = "bingus";
-        let jsonMessage = JSON.stringify(
-            {
-                message_type: "post-like",
-                message:{
-                    postID: `${postID}`,
-                    isLike: `${isLike}`
+        if (this.profile.profileID != null){
+            let jsonMessage = JSON.stringify(
+                {
+                    message_type: "post-like",
+                    message:{
+                        postID: postID,
+                        isLike: isLike
+                    }
                 }
-            }
-        );
-        
-        this.client.send(jsonMessage);
+            );
+            
+            this.client.send(jsonMessage);
+            return true;
+        }
+        console.log("must be logged in.");
+        return false;
     }
     
     SendCommentLike(commentID, isLike){
-        let user = "bingus";
-        let jsonMessage = JSON.stringify(
-            {
-                message_type: "comment-like",
-                message:{
-                    commentID: `${commentID}`,
-                    isLike: `${isLike}`
+        if (this.profile.profileID != null){
+            let jsonMessage = JSON.stringify(
+                {
+                    message_type: "comment-like",
+                    message:{
+                        commentID: commentID,
+                        isLike: isLike
+                    }
                 }
-            }
-        );
-        
-        this.client.send(jsonMessage);
+            );
+            
+            this.client.send(jsonMessage);
+            return true;
+        }
+        console.log("must be logged in.");
+        return false;
     }
     
     SendNotice(notice){
@@ -143,11 +184,12 @@ class WSClient extends React.Component
         this.client.send(jsonMessage);
     }
 
-    RecieveMessage(received){
+    ReceiveMessage(received){
         switch (received.message_type){
             case "post":
                 //Post(received.message.text, received.profileID, received.postID);
-                this.app.SubmitNewPost("notin", received.profileID, received.message.text);
+                this.app.SubmitNewPost(received.user, received.postID, received.message.title,  received.message.text);
+                // profileID might just end up being the name.
                 break;
 
             case "comment":
@@ -155,12 +197,7 @@ class WSClient extends React.Component
                 break;
 
             case "post-like":
-                if (received.messsge.isLike){
-                    //LikePost(received.message.postID);
-                }
-                else{
-                    //DislikePost(received.message.postID);
-                }
+                this.app.SubmitPostInteraction(received.message.postID, received.message.isLike);
                 break;
 
             case "comment-like":
@@ -175,6 +212,20 @@ class WSClient extends React.Component
             case "login":
                 if (received.profileID != null){
                     //SetUserID(received.profileID);
+                    this.profile.profileID = received.profileID;
+                    console.log(`logged in as ${this.profile.username}.`);
+                }
+                else {
+                    console.log("login failed");
+                    //handle login retry
+                }
+                break;
+
+            case "signup":
+                if (received.profileID != null){
+                    //SetUserID(received.profileID);
+                    this.profile.profileID = received.profileID;
+                    console.log(`logged in as ${this.profile.username}.`);
                 }
                 else {
                     console.log("login failed");
@@ -185,6 +236,7 @@ class WSClient extends React.Component
             case "post-history":
                 received.postHistoryList.forEach(post => {
                     //Post(post.message.text, post.profileID, post.postID);
+                    this.app.SubmitNewPost(post.profileID, post.postID, received.message.title, post.message.text);
                 });
                 break;
 
@@ -200,6 +252,7 @@ class WSClient extends React.Component
         console.log(received);
     }
 }
+
 
 
 export default WSClient;
