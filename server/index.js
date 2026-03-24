@@ -47,11 +47,12 @@ class WSServer
 
   }
 
-  static handleMessage(bytes, uuid){
+  static async handleMessage(bytes, uuid){
     const message = JSON.parse(bytes.toString()); 
     const user = WSServer.users[uuid];
 
-    const responds = this.GetServerResponse(message, uuid);
+    const responds = await this.GetServerResponse(message, uuid);
+
 
     // user.state = message;
     if (responds != null){
@@ -87,13 +88,13 @@ class WSServer
   }
   
 
-  static GetServerResponse(received, uuid){
+  static async GetServerResponse(received, uuid){
 
     switch (received.message_type){
       case "post":
-        let postID = addPostQuery(received.profileID, received.message.title, received.message.text);
-        postID.then(function(result){received.postID = result});
-        received = {user: this.users[received.profileID]}
+        let postID = await addPostQuery(received.profileID, received.message.title, received.message.text);
+        received.postID = postID;
+        received.user = this.users[received.profileID];
         return received;
 
       case "comment":
@@ -102,11 +103,11 @@ class WSServer
         return received;
 
       case "post-like":
-        likePostQuery(received.message.postID, received.message.value)
+        likePostQuery(received.message.postID, received.message.isLike)
         return received;
 
       case "comment-like":
-        likeCommentQuery(received.message.commentID, received.message.value)
+        likeCommentQuery(received.message.commentID, received.message.isLike)
         return received;
 
       case "login":

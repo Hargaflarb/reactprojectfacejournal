@@ -251,32 +251,32 @@ class App extends React.Component{
 //   );
 // }
 
-function Post(props){
-  return(
-  <div className="post" onClick={props.onClick}>
-    <h3>{props.title}</h3>
-    <h4>{props.posterUserName}</h4>
-    <p>{props.text}</p>
-    <button className='likeBtn'><image/></button>
-    <button className='dislikeBtn'><image/></button>
-  </div>)}
+// function Post(props){
+//   return(
+//   <div className="post" onClick={props.onClick}>
+//     <h3>{props.title}</h3>
+//     <h4>{props.posterUserName}</h4>
+//     <p>{props.text}</p>
+//     <button className='likeBtn'><image/></button>
+//     <button className='dislikeBtn'><image/></button>
+//   </div>)}
 
-  function TemplatePost(){
-  return { title:"Temp Title", 
-    posterUserName:"Temp user", 
-    text:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-  }
-}
+//   function TemplatePost(){
+//   return { title:"Temp Title", 
+//     posterUserName:"Temp user", 
+//     text:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+//   }
+// }
 
-//temp id maker, feel free to remove, doesn't make unique ids
-function MakeRandomID(length){
-let result='';
-let characters='QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwertyuiopasdfghjklzxcvbnm';
-for (let i=0;i<length;i++){
-  result += characters.charAt(Math.floor(Math.random()*characters.length));
-}
-return result;
-}
+// //temp id maker, feel free to remove, doesn't make unique ids
+// function MakeRandomID(length){
+// let result='';
+// let characters='QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwertyuiopasdfghjklzxcvbnm';
+// for (let i=0;i<length;i++){
+//   result += characters.charAt(Math.floor(Math.random()*characters.length));
+// }
+// return result;
+// }
 
 
 
