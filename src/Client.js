@@ -49,6 +49,22 @@ class WSClient extends React.Component
         });
     }
 
+
+    SendSignUp(username, password){
+        this.profile.username = username; //not logged in yet
+
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "signup",
+                message:{
+                    username: username,
+                    password: password
+                }
+            }
+        );
+        
+        this.client.send(jsonMessage);
+    }
     
     RequestLogIn(username, password){
         this.profile.username = username; //not logged in yet
@@ -204,10 +220,22 @@ class WSClient extends React.Component
                 }
                 break;
 
+            case "signup":
+                if (received.profileID != null){
+                    //SetUserID(received.profileID);
+                    this.profile.profileID = received.profileID;
+                    console.log(`logged in as ${this.profile.username}.`);
+                }
+                else {
+                    console.log("login failed");
+                    //handle login retry
+                }
+                break;
+
             case "post-history":
                 received.postHistoryList.forEach(post => {
                     //Post(post.message.text, post.profileID, post.postID);
-                    this.app.SubmitNewPost(post.profileID, post.postID, "notin", post.message.text);
+                    this.app.SubmitNewPost(post.profileID, post.postID, received.message.title, post.message.text);
                 });
                 break;
 

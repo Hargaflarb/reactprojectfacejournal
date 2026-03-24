@@ -25,11 +25,11 @@ async function testQuery() {
 
 }
 
-async function addPostQuery(profileID, text) {
+async function addPostQuery(profileID, title, text) {
     let result;
     try {
         await sql.connect(sqlConfig);
-        result = await sql.query(`INSERT INTO Post VALUES ('${profileID}', '${text}', '0', '0')`);
+        result = await sql.query(`INSERT INTO Post VALUES ('${profileID}', '${title}', '${text}', '0', '0')`);
         console.dir(result);
         var postID = await sql.query(`SELECT MAX(PostID) FROM Post`);
         var id = postID.recordset.toTable().rows[0]
