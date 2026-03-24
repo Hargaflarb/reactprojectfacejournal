@@ -77,13 +77,12 @@ height: 100%;
 
 .post{
   background-color: darkgray;
-  cursor: pointer;
   padding: 20px;
   margin: 1%;
 }
 
-h3.post:hover{
-  text-decoration: underline;
+.post:hover{
+  background-color: lightgray;
 }
 
 #addPostBtn{
@@ -94,15 +93,22 @@ h3.post:hover{
   text-align: center;
 }
 
-.likeBtn
-{
-float: right;
-height: 30px;
-width: 30px;
+.commentOptions{
+  display: none;
 }
-.dislikeBtn
-{
-float: right;
-height: 30px;
-width: 30px;
+.viewCommentsBtn{
+  height: 50px;
+  cursor: pointer;
 }
+
+.newCommentField{
+  font-size: large;
+  background-color: lightgrey;
+}
+.newCommentField:hover{
+  background-color: white;
+}
+.post:hover .commentOptions{
+  display: block;
+}
+
