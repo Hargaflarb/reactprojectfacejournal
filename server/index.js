@@ -2,11 +2,12 @@
 // to start the server, write "node index.js" in the terminal, while in the server directory.
 // if you're unsure of how it works hit me up.
 
-const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery} = require('./database.js');
+const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery} = require('./database.js');
 const { WebSocketServer } = require("ws");
 const http = require("http");
 const uuidv4 = require("uuid").v4;
 const url = require("url");
+const { profile } = require('console');
 
 
 
@@ -111,12 +112,11 @@ class WSServer
         return received;
 
       case "login":
-        received.message.username; // the username
-        received.message.password; // the password
-        // database stuff here
-        received.profileID = 1; // the profileID, set to null if login failed
+        loginQuery(received.message.username, received.message.password);
+        received.profileID = await loginQuery(received.message.username, received.message.password)
         this.users[received.profileID] = received.message.username;
         this.MonoSend(received, uuid);
+        console.log(received.profileID);
         break;
 
       case "signup":

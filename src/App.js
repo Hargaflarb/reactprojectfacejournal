@@ -18,7 +18,6 @@ class App extends React.Component{
     this.AddComment=this.AddComment.bind(this);
     this.CreateLoginPopup = this.CreateLoginPopup.bind(this);
     this.CreateSignUpPopup = this.CreateSignUpPopup.bind(this);
-    this.InteractWithPost = this.InteractWithPost.bind(this);
   }
 
 

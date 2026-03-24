@@ -1,3 +1,4 @@
+const { eventWrapper } = require('@testing-library/user-event/dist/utils');
 const sql = require('mssql/msnodesqlv8');
 
 const sqlConfig = {
@@ -94,4 +95,23 @@ async function likeCommentQuery(commentID, value){
     }
 }
 
-module.exports = { testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, sqlConfig};
+async function loginQuery(username, password){
+    try {
+        await sql.connect(sqlConfig);
+        var result = await sql.query(`SELECT * FROM Profile WHERE Username = '${username}'`);
+        console.dir(result);
+        if (result.recordset.toTable().rows[0][2] === password){
+            console.log("Correct password!")
+        }
+        else{
+            console.log("Something went wrong")
+            return null
+        }
+        return result.recordset.toTable().rows[0][0]
+    }
+    catch (err){
+        console.error(err);
+    }
+}
+
+module.exports = { testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, sqlConfig};
