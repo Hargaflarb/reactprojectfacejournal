@@ -16,6 +16,7 @@ class App extends React.Component{
 
     this.CreatePostPopup = this.CreatePostPopup.bind(this);
     this.CreateLoginPopup = this.CreateLoginPopup.bind(this);
+    this.CreateSignUpPopup = this.CreateSignUpPopup.bind(this);
     this.InteractWithPost = this.InteractWithPost.bind(this);
   }
 
