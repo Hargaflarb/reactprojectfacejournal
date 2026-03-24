@@ -44,7 +44,7 @@ class App extends React.Component{
   AddComment(post,text)
   {
     console.log(post.title+" was commented on by (username)");
-    this.document.getElementById(post.key).querySelectorAll('comments').appendChild(<Comment posterUserName='username' text={text}/>)
+    //this.document.getElementById(post.key).querySelectorAll('comments').appendChild(<Comment posterUserName='username' text={text}/>)
     
   }
 
