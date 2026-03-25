@@ -14,6 +14,9 @@ class App extends React.Component{
       postInteractions:[
 
       ],
+      commentInteractions:[
+
+      ],
       client: props.client.ReferanceExchange(this)
     }
 
@@ -137,6 +140,21 @@ class App extends React.Component{
     }
   }
 
+  //likes and dislikes
+  MakeCommentInteraction(commentID, isLike){
+    let interactions = this.state.commentInteractions[commentID]
+    if (!(isLike ? interactions.liked : interactions.disliked)){
+      this.state.client.SendCommentLike(postID, isLike);
+      
+      if (isLike){
+        this.state.commentInteractions[commentID].liked = true;
+      }
+      else{
+        this.state.commentInteractions[commentID].disliked = true;
+      }
+    }
+  }
+
 
   SubmitNewPost(user,postID,postTitle,message){
     let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:0, dislikes:0};
@@ -145,10 +163,12 @@ class App extends React.Component{
     this.state.postInteractions[postID] = {liked: false, disliked: false};
   }
 
-  // SubmitNewComment(postTitle,user,message){ //not functional
-  //   let newPost={ title:postTitle, posterUserName:user, text:message, likes:0, dislikes:0};
-  //   this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
-  // }
+  SubmitNewComment(user,commentID,postID,message){ //not functional
+    let newComment={ posterUserName:user, commentID:commentID, text:message, likes:0, dislikes:0};
+    this.setState({allPosts: (posts=>{posts})(this.state.allPosts)});
+
+    this.state.commentInteractions[commentID] = {liked: false, disliked: false};
+  }
 
   SubmitCommentInteraction(commentID, isLike){
     if (isLike){
