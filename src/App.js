@@ -123,9 +123,13 @@ class App extends React.Component{
   }
 
 
-  SubmitNewPost(user,postID,postTitle,message){
-    let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:0, dislikes:0};
+  SubmitNewPost(user,postID,postTitle,message, likes=0, dislikes=0){
+    let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:likes, dislikes:dislikes};
     this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
+  }
+
+  SubmitNewPost(posts){
+    this.setState({allPosts: (prevPosts => prevPosts.concat(posts))(this.state.allPosts)});
   }
 
   // SubmitNewComment(postTitle,user,message){ //not functional

@@ -32,9 +32,9 @@ async function addPostQuery(profileID, title, text) {
         await sql.connect(sqlConfig);
         result = await sql.query(`INSERT INTO Post VALUES ('${profileID}', '${title}', '${text}', '0', '0')`);
         console.dir(result);
-        var postID = await sql.query(`SELECT MAX(PostID) FROM Post`);
-        var id = postID.recordset.toTable().rows[0]
-        return id[0];
+        var postID = await sql.query(`SELECT * FROM Post ORDER BY PostID DESC`);
+        var id = postID.recordset[0].PostID;
+        return id;
     }
     catch (err) {
         console.error(err);
@@ -46,9 +46,9 @@ async function addCommentQuery(profileID, text, postID) {
         await sql.connect(sqlConfig);
         const result = await sql.query(`INSERT INTO Comment VALUES ('${profileID}', '${text}', '0', '0', '${postID}')`);
         console.dir(result);
-        var postID = await sql.query(`SELECT MAX(CommentID) FROM Comment`);
-        var id = postID.recordset.toTable().rows[0]
-        return id[0];
+        var postID = await sql.query(`SELECT * FROM Comment ORDER BY CommentID DESC`);
+        var id = postID.recordset[0].CommentID;
+        return id;
     }
     catch (err) {
         console.error(err);
@@ -100,18 +100,69 @@ async function loginQuery(username, password){
         await sql.connect(sqlConfig);
         var result = await sql.query(`SELECT * FROM Profile WHERE Username = '${username}'`);
         console.dir(result);
-        if (result.recordset.toTable().rows[0][2] === password){
+        if (result.recordset[0].Passwrd === password){
             console.log("Correct password!")
         }
         else{
             console.log("Something went wrong")
             return null
         }
-        return result.recordset.toTable().rows[0][0]
+        return result.recordset[0].ProfileID;
     }
     catch (err){
         console.error(err);
     }
 }
 
-module.exports = { testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, sqlConfig};
+async function signupQuery(username, password){
+    try {
+        await sql.connect(sqlConfig);
+        var checkuser = await sql.query(`SELECT * FROM Profile WHERE Username = '${username}'`)
+        console.dir(checkuser)
+        if (checkuser.recordset[0] ==! null && checkuser.recordset[0].Username === username){
+            console.log("That's not right");
+            return null
+        }
+        else{
+            console.log("That one's allowed")
+        }
+        var result = await sql.query(`INSERT INTO Profile VALUES ('${username}', '${password}')`);
+        console.dir(result);
+        var postID = await sql.query(`SELECT * FROM Profile ORDER BY ProfileID DESC`);
+        var id = postID.recordset[0].ProfileID;
+        return id;
+    }
+    catch (err){
+        console.error(err);
+    }
+}
+
+async function postHistoryQuery(){
+    try {
+        await sql.connect(sqlConfig);
+        var postList = await sql.query(`SELECT * FROM Post ORDER BY PostID DESC`);
+        console.log(postList.recordset[0].PostID);
+        return postList
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+async function usernameListQuery(){
+    try {
+        await sql.connect(sqlConfig);
+        var usernameList = await sql.query(`SELECT Username FROM Profile ORDER BY ProfileID ASC`);
+        var output = []
+        for (let i = 0; i < usernameList.recordset.length; i++){
+            output.push(usernameList.recordset[i].Username)
+        }
+        console.log(output);
+        return output
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+module.exports = { testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, signupQuery, postHistoryQuery, usernameListQuery, sqlConfig};

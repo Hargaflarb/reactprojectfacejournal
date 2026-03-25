@@ -37,6 +37,7 @@ class WSClient extends React.Component
         this.client.addEventListener("open", event => {
             this.SendNotice("Connection Established");
             // console.log("connection opened");
+            this.RequestPostHistory();
         });
         
         this.client.addEventListener("message", event => {
@@ -234,10 +235,12 @@ class WSClient extends React.Component
                 break;
 
             case "post-history":
-                received.postHistoryList.forEach(post => {
-                    //Post(post.message.text, post.profileID, post.postID);
-                    this.app.SubmitNewPost(post.profileID, post.postID, received.message.title, post.message.text);
-                });
+                console.log(received.postHistoryList);
+                this.app.SubmitNewPost(received.postHistoryList);
+                // received.postHistoryList.forEach((post) => {
+                //     //Post(post.message.text, post.profileID, post.postID);
+                //     this.app.SubmitNewPost(post.user, post.postID, post.message.title, post.message.text, post.likes, post.dislikes);
+                // });
                 break;
 
             case "notice":
