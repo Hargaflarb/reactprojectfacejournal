@@ -176,13 +176,17 @@ class App extends React.Component{
   }
 
 
-  SubmitNewPost(user,postID,postTitle,message){
-    let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:0, dislikes:0};
+  SubmitNewPost(user,postID,postTitle,message, likes=0, dislikes=0){
+    let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:likes, dislikes:dislikes};
     this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
     //this.setState({postInteractions: (interactions => {interactions[postID] = {liked: false, disliked: false};})(this.state.postInteractions)})
     this.state.postInteractions[postID] = {liked: false, disliked: false};
   }
 
+  SubmitNewPost(posts){
+    this.setState({allPosts: (prevPosts => prevPosts.concat(posts))(this.state.allPosts)});
+  }
+  
   SubmitCommentInteraction(commentID, isLike){
     if (isLike){
       this.state.allPosts.find((comment)=>comment.commentID==commentID).likes += 1;

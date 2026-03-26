@@ -2,11 +2,12 @@
 // to start the server, write "node index.js" in the terminal, while in the server directory.
 // if you're unsure of how it works hit me up.
 
-const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery} = require('./database.js');
+const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, signupQuery, postHistoryQuery, usernameListQuery} = require('./database.js');
 const { WebSocketServer } = require("ws");
 const http = require("http");
 const uuidv4 = require("uuid").v4;
 const url = require("url");
+const { profile } = require('console');
 
 
 
@@ -18,6 +19,7 @@ class WSServer
   
   static connections = {};
   static users = {};
+  static usernames = [];
 
 
   static StartServer(){
@@ -81,7 +83,7 @@ class WSServer
     console.log(broadcastObject);
   }
 
-  static MonoSend(sentObject, uuid){
+  static async MonoSend(sentObject, uuid){
     const connection = WSServer.connections[uuid];
     const message = JSON.stringify(sentObject);
     connection.send(message);
@@ -112,31 +114,42 @@ class WSServer
         return received;
 
       case "login":
-        received.message.username; // the username
-        received.message.password; // the password
-        // database stuff here
-        received.profileID = 1; // the profileID, set to null if login failed
-        this.users[received.profileID] = received.message.username;
+        received.profileID = await loginQuery(received.message.username, received.message.password)
+        this.usernames[received.profileID] = received.message.username;
         this.MonoSend(received, uuid);
+        console.log(received.profileID);
         break;
 
       case "signup":
-        received.message.username; // the username
-        received.message.password; // the password
-        // database stuff here
-        received.profileID = 1; // the profileID, set to null if login failed
-        this.users[received.profileID] = received.message.username;
+        received.profileID = await signupQuery(received.message.username, received.message.password)
+        this.usernames[received.profileID] = received.message.username;
         this.MonoSend(received, uuid);
+        console.log(received.profileID);
         break;
 
       case "post-history":
-        // database stuff here
-
-        let postHistoryList = [];
+        this.usernames = await usernameListQuery();
+        console.log(this.usernames);
+        let postHistoryList = await postHistoryQuery();
+        let formattedList = [];
+        for (let i = 0; i < postHistoryList.recordset.length; i++){
+          let post = postHistoryList.recordset[i];
+          //console.log(this.usernames[post.ProfileID]);
+          formattedList.push({
+            profileID: post.ProfileID,
+            posterUserName: (()=>{return this.usernames[post.ProfileID] === undefined ? "unknown" : this.usernames[post.ProfileID]})(),
+            message_type: "post",
+            title: post.PostTitle,
+            text: post.PostText,
+            likes: post.Likes,
+            dislikes: post.Dislikes,
+            postID: post.PostID
+          })
+        };
         let responds = 
         {
           message_type: "post-history",
-          postHistoryList
+          postHistoryList:formattedList
         }
         this.MonoSend(responds, uuid);
         break;
