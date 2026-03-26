@@ -95,14 +95,14 @@ class WSServer
       case "post":
         let postID = await addPostQuery(received.profileID, received.message.title, received.message.text);
         received.postID = postID;
-        received.user = this.users[received.profileID];
+        received.user = this.usernames[received.profileID];
         return received;
 
       case "comment":
-        let commentID = await addCommentQuery(received.profileID, received.message.text, received.postID);
+        let commentID = await addCommentQuery(received.profileID, received.message.text, received.message.postID);
         // commentID.then(function(result){received.commentID = result})
         received.commentID = commentID;
-        received.user = this.users[received.profileID];
+        received.user = this.usernames[received.profileID];
         return received;
 
       case "post-like":
@@ -130,7 +130,7 @@ class WSServer
       case "post-history":
         this.usernames = await usernameListQuery();
         let postHistoryList = await postHistoryQuery();
-        
+
         console.log("\naccounts:")
         console.log(this.usernames);
         

@@ -99,7 +99,6 @@ class WSClient extends React.Component
             let jsonMessage = JSON.stringify(
                 {
                     profileID: this.profile.profileID,
-                    
                     message_type: "post",
                     message:{
                         title: `${title}`,
