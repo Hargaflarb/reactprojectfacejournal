@@ -56,7 +56,6 @@ class WSServer
     const responds = await this.GetServerResponse(message, uuid);
 
 
-    // user.state = message;
     if (responds != null){
       WSServer.broadcast(responds);
     }
@@ -79,7 +78,7 @@ class WSServer
       connection.send(message);
     });
 
-    console.log("broadcast:");
+    console.log(`\nbroadcast:`);
     console.log(broadcastObject);
   }
 
@@ -100,8 +99,9 @@ class WSServer
         return received;
 
       case "comment":
-        let commentID = addCommentQuery(received.profileID, received.message.text, received.message.postID);
-        commentID.then(function(result){received.commentID = result})
+        let commentID = await addCommentQuery(received.profileID, received.message.text, received.postID);
+        // commentID.then(function(result){received.commentID = result})
+        received.commentID = commentID;
         received.user = this.users[received.profileID];
         return received;
 
@@ -116,25 +116,27 @@ class WSServer
       case "login":
         received.profileID = await loginQuery(received.message.username, received.message.password)
         this.usernames[received.profileID] = received.message.username;
+        console.log(received);
         this.MonoSend(received, uuid);
-        console.log(received.profileID);
         break;
 
       case "signup":
         received.profileID = await signupQuery(received.message.username, received.message.password)
         this.usernames[received.profileID] = received.message.username;
+        console.log(received);
         this.MonoSend(received, uuid);
-        console.log(received.profileID);
         break;
 
       case "post-history":
         this.usernames = await usernameListQuery();
-        console.log(this.usernames);
         let postHistoryList = await postHistoryQuery();
+        
+        console.log("\naccounts:")
+        console.log(this.usernames);
+        
         let formattedList = [];
         for (let i = 0; i < postHistoryList.recordset.length; i++){
           let post = postHistoryList.recordset[i];
-          //console.log(this.usernames[post.ProfileID]);
           formattedList.push({
             profileID: post.ProfileID,
             posterUserName: (()=>{return this.usernames[post.ProfileID] === undefined ? "unknown" : this.usernames[post.ProfileID]})(),
@@ -146,6 +148,7 @@ class WSServer
             postID: post.PostID
           })
         };
+
         let responds = 
         {
           message_type: "post-history",

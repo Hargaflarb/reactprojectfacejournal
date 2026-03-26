@@ -12,6 +12,7 @@ class App extends React.Component{
         // TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()
       ], 
       allComments:[
+
       ],
       postInteractions:[
 
@@ -34,6 +35,47 @@ class App extends React.Component{
   }
 
 
+
+
+  ViewComments(post){
+  console.log(post.title+" was looked at by (username)");
+  let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true")
+  commentWindow.document.body.innerHTML=("<div id='root'></div>");
+  const subRoot = ReactDOM.createRoot(commentWindow.document.getElementById('root'));
+    subRoot.render(
+      <React.StrictMode>
+        <>
+        <div>
+        <h4>{post.posterUserName}</h4>
+      <h3>{post.title}</h3>
+      <p>{post.text}</p>
+      </div>
+        <textarea id='commentTextbox' placeholder='Comment...'></textarea>
+        <button onClick={()=>this.ExtractCommentText(commentWindow.document,post)}>Submit</button>
+        <div>{
+          this.state.allComments.filter(comment=>comment.postID==post.postID).map((comment)=>
+          Comment({
+            key:comment.commentID,
+            postID:comment.postID,
+            posterUserName:comment.posterUserName,
+            text:comment.text,
+            likes:comment.likes,
+            dislikes:comment.dislikes,
+          }))}
+        </div>
+          
+        </>
+      </React.StrictMode>
+    );
+  }
+
+  ExtractCommentText(postDocument,post){
+    let text=postDocument.getElementById("commentTextbox").value;
+    console.log("button pressed!");
+    this.state.client.SendComment(post.postID, text);
+    // this.AddComment(post.postID, text);
+  }
+
   CreatePostPopup()
   {
     let postWindow=window.open("","newPostWindow","width=600,height=600 popup=true");
@@ -55,49 +97,6 @@ class App extends React.Component{
         </>
       </React.StrictMode>
     );
-  }
-  ViewComments(post){
-  console.log(post.title+" was looked at by (username)");
-  let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true")
-  commentWindow.document.body.innerHTML=("<div id='root'></div>");
-  const subRoot = ReactDOM.createRoot(commentWindow.document.getElementById('root'));
-    subRoot.render(
-      <React.StrictMode>
-        <>
-        <div>
-        <h4>{post.posterUserName}</h4>
-      <h3>{post.title}</h3>
-      <p>{post.text}</p>
-      </div>
-        <textarea id='commentTextbox' placeholder='Comment...'></textarea>
-        <button onClick={()=>this.ExtractCommentText(commentWindow.document,post)}>Submit</button>
-        <div>{
-          this.state.allComments.filter(comment=>comment.postID==post.postID).map((comment)=>
-          Comment({
-            key:comment.postID,
-            posterUserName:post.posterUserName,
-            text:comment.text,
-            likes:comment.likes,
-            dislikes:comment.dislikes,
-          }))}
-        </div>
-          
-        </>
-      </React.StrictMode>
-    );
-  }
-
-  AddComment(message,post)
-  {
-    console.log(post.title+" was commented on by (username)");
-    let newComment={ postID:post.key, text:message, likes:0, dislikes:0};
-    this.setState({allComments: (prevComments=>[newComment,...prevComments])(this.state.allComments)});
-  }
-
-    ExtractCommentText(postDocument,post){
-    let text=postDocument.getElementById("commentTextbox").value;
-    console.log("button pressed!");
-    this.AddComment(text,post);
   }
 
   ExtractText(postDocument){
@@ -196,31 +195,33 @@ class App extends React.Component{
   }
 
 
-  SubmitNewPost(user,postID,postTitle,message, likes=0, dislikes=0){
-    let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:likes, dislikes:dislikes};
+  SubmitNewPost(user,postID,postTitle,text, likes=0, dislikes=0){
+    let newPost={ posterUserName:user, postID:postID, title:postTitle, text:text, likes:likes, dislikes:dislikes};
     this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
     //this.setState({postInteractions: (interactions => {interactions[postID] = {liked: false, disliked: false};})(this.state.postInteractions)})
     this.state.postInteractions[postID] = {liked: false, disliked: false};
   }
 
-  SubmitNewPost(posts){
+  SubmitNewPosts(posts){
     this.setState({allPosts: (prevPosts=>prevPosts.concat(posts))(this.state.allPosts)});
     posts.forEach(post => {
       this.state.postInteractions[post.postID] = {liked: false, disliked: false};
     });
 
   }
-    // let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:likes, dislikes:dislikes};
-    //this.setState({postInteractions: (interactions => {interactions[postID] = {liked: false, disliked: false};})(this.state.postInteractions)})
-    // this.state.postInteractions[postID] = {liked: false, disliked: false};
 
+  AddComment(user, commentID, postID, text, likes=0, dislikes=0)
+  {
+    console.log("post ID: " + postID + ", was commented on by " + user);
+    let newComment={ posterUserName:user, commentID: commentID, postID:postID, text:text, likes:likes, dislikes:dislikes};
+    this.setState({allComments: (prevComments=>[newComment,...prevComments])(this.state.allComments)});
+    
+    this.state.commentInteractions[commentID] = {liked: false, disliked: false};
+  }
 
-  // SubmitNewComment(user,commentID,postID,message){ //not functional
-  //   let newComment={ posterUserName:user, commentID:commentID, text:message, likes:0, dislikes:0};
-  //   this.setState({allPosts: (posts=>{posts})(this.state.allPosts)});
-
-  //   this.state.commentInteractions[commentID] = {liked: false, disliked: false};
-  // }
+  AddComments(comments){
+    
+  }
 
   SubmitCommentInteraction(commentID, isLike){
     if (isLike){
@@ -274,6 +275,7 @@ class App extends React.Component{
   }
 
 
+
   Post(props){
     return(
     <div className="post">
@@ -290,7 +292,6 @@ class App extends React.Component{
   DoBold(text, postID, intrctn){
     let intrctns = this.state.postInteractions[postID]; 
     return (intrctn ? intrctns.liked : intrctns.disliked) ? <b>{text}</b> : <div>{text}</div>;
-    // return <div>{text}</div>;
   }
 
   render(){

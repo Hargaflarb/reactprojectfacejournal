@@ -195,7 +195,7 @@ class WSClient extends React.Component
                 break;
 
             case "comment":
-                //PostComment(received.message.text, received.message.postID, received.profileID, received.commentID);
+                this.app.AddComment(received.user, received.commentID, received.postID, received.message.text);
                 break;
 
             case "post-like":
@@ -237,7 +237,7 @@ class WSClient extends React.Component
 
             case "post-history":
                 // console.log(received.postHistoryList);
-                this.app.SubmitNewPost(received.postHistoryList);
+                this.app.SubmitNewPosts(received.postHistoryList);
                 break;
 
             case "notice":

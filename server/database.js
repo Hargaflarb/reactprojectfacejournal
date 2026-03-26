@@ -95,7 +95,7 @@ async function loginQuery(username, password){
     try {
         await sql.connect(sqlConfig);
         var result = await sql.query(`SELECT * FROM Profile WHERE Username = '${username}'`);
-        console.dir(result);
+        // console.dir(result);
         if (result.recordset[0].Passwrd === password){
             console.log("Correct password!")
         }
