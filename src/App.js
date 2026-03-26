@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import React, { useState, useEffect} from 'react';
 import WSClient from './Client';
 
+
 class App extends React.Component{
   constructor(props){
     super(props);
@@ -37,7 +38,8 @@ class App extends React.Component{
 
 
 
-  ViewComments(post){
+  async ViewComments(post){
+   await commentListQuery();
   console.log(post.title+" was looked at by (username)");
   let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true")
   commentWindow.document.body.innerHTML=("<div id='root'></div>");
