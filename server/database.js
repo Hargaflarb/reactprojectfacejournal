@@ -114,7 +114,7 @@ async function signupQuery(username, password){
     try {
         await sql.connect(sqlConfig);
         var checkuser = await sql.query(`SELECT * FROM Profile WHERE Username = '${username}'`)
-        console.dir(checkuser)
+        // console.dir(checkuser)
         if (checkuser.recordset[0] ==! null && checkuser.recordset[0].Username === username){
             console.log("That's not right");
             return null
@@ -123,7 +123,7 @@ async function signupQuery(username, password){
             console.log("That one's allowed")
         }
         var result = await sql.query(`INSERT INTO Profile VALUES ('${username}', '${password}')`);
-        console.dir(result);
+        // console.dir(result);
         var postID = await sql.query(`SELECT * FROM Profile ORDER BY ProfileID DESC`);
         var id = postID.recordset[0].ProfileID;
         return id;
@@ -137,7 +137,7 @@ async function postHistoryQuery(){
     try {
         await sql.connect(sqlConfig);
         var postList = await sql.query(`SELECT * FROM Post ORDER BY PostID DESC`);
-        console.log(postList.recordset[0].PostID);
+        // console.log(postList.recordset[0].PostID);
         return postList
     }
     catch (err) {

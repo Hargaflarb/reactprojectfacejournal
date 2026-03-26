@@ -11,7 +11,7 @@ class App extends React.Component{
       allPosts:[
         // TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()
       ], 
-      allComments:[],
+      allComments:[
       ],
       postInteractions:[
 
@@ -205,6 +205,10 @@ class App extends React.Component{
 
   SubmitNewPost(posts){
     this.setState({allPosts: (prevPosts=>prevPosts.concat(posts))(this.state.allPosts)});
+    posts.forEach(post => {
+      this.state.postInteractions[post.postID] = {liked: false, disliked: false};
+    });
+
   }
     // let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:likes, dislikes:dislikes};
     //this.setState({postInteractions: (interactions => {interactions[postID] = {liked: false, disliked: false};})(this.state.postInteractions)})
@@ -286,6 +290,7 @@ class App extends React.Component{
   DoBold(text, postID, intrctn){
     let intrctns = this.state.postInteractions[postID]; 
     return (intrctn ? intrctns.liked : intrctns.disliked) ? <b>{text}</b> : <div>{text}</div>;
+    // return <div>{text}</div>;
   }
 
   render(){

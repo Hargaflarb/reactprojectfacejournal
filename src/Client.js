@@ -236,7 +236,7 @@ class WSClient extends React.Component
                 break;
 
             case "post-history":
-                console.log(received.postHistoryList);
+                // console.log(received.postHistoryList);
                 this.app.SubmitNewPost(received.postHistoryList);
                 break;
 
