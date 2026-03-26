@@ -12,7 +12,6 @@ class App extends React.Component{
         // TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()
       ], 
       allComments:[],
-      ],
       postInteractions:[
 
       ],
@@ -42,6 +41,7 @@ class App extends React.Component{
         <>
           <h1>New post</h1>
           <hr/>
+          <i><p id='remainingCharsCounter'>2000</p></i>
           <input type="text" id="titleTextbox" placeholder='New Post Title' style={{backgroundColor: 'light-gray'}}></input>
           <br/>
           <textarea id="contentTextbox" placeholder='Write your post here' style={{backgroundColor: 'light-gray', height:'70%',width:'98%', alignSelf:'center'}}></textarea>
@@ -52,28 +52,35 @@ class App extends React.Component{
     );
   }
   ViewComments(post){
-  console.log(post.title+" was looked at by (username)");
-  let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true")
-  commentWindow.document.body.innerHTML=("<div id='root'></div>");
+    console.log(post.title+" was looked at by (username)");
+    let commentWindow=window.open("","commentsWndow","width=700,height=500 popup=true")
+    commentWindow.document.body.innerHTML=("<div id='root'></div>");
+
+    commentWindow.document.getElementById("root").style.height="100%";
+    commentWindow.document.getElementById("root").style.width="100%";
+    commentWindow.document.body.style.backgroundColor="gray";
+
   const subRoot = ReactDOM.createRoot(commentWindow.document.getElementById('root'));
     subRoot.render(
       <React.StrictMode>
         <>
-        <div>
-        <h4>{post.posterUserName}</h4>
-      <h3>{post.title}</h3>
-      <p>{post.text}</p>
-      </div>
-        <textarea id='commentTextbox' placeholder='Comment...'></textarea>
-        <button onClick={()=>this.ExtractCommentText(commentWindow.document,post)}>Submit</button>
-        <div>{
+        <div style={{backgroundColor: 'lightgray', position: 'sticky', padding:'15px', top:'0', wordWrap:'break-word'}}>
+          <h4>{post.posterUserName}</h4>
+          <h3>{post.title}</h3>
+          <p>{post.text}</p>
+        </div>
+        <br/>
+        <textarea id='commentTextbox' placeholder='Comment...' style={{position:'sticky', top:'100'}}></textarea>
+        <button onClick={()=>this.ExtractCommentText(commentWindow.document,post)} style={{position:'sticky', top:'100'}}>Submit</button>
+        <div style={{overflow: 'scroll'}}>
+        {
           this.state.allComments.filter(comment=>comment.postID==post.postID).map((comment)=>
-          Comment({
-            key:comment.postID,
-            posterUserName:post.posterUserName,
-            text:comment.text,
-            likes:comment.likes,
-            dislikes:comment.dislikes,
+            Comment({
+              key:comment.postID,
+              posterUserName:post.posterUserName,
+              text:comment.text,
+              likes:comment.likes,
+              dislikes:comment.dislikes,
           }))}
         </div>
           
@@ -91,6 +98,7 @@ class App extends React.Component{
 
     ExtractCommentText(postDocument,post){
     let text=postDocument.getElementById("commentTextbox").value;
+    postDocument.getElementById("commentTextbox").value="";
     console.log("button pressed!");
     this.AddComment(text,post);
   }
@@ -249,7 +257,7 @@ class App extends React.Component{
 
 function Comment(props){
   return(
-    <div className='comment'>
+    <div className='comment' style={{backgroundColor:'lightgray', padding:'5px', margin:'5px'}}>
       {/* <h5>{props.posterUserName}</h5> */}
       <p>{props.text}</p>
     </div>
