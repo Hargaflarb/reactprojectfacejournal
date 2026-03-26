@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import ReactDOM from 'react-dom/client';
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import WSClient from './Client';
 
 class App extends React.Component{
@@ -10,12 +10,14 @@ class App extends React.Component{
     this.state = {
       allPosts:[
         // TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()
-      ],
+      ], 
+      allComments:[],
       client: props.client.ReferanceExchange(this)
     }
 
     this.CreatePostPopup = this.CreatePostPopup.bind(this);
     this.AddComment=this.AddComment.bind(this);
+    this.ViewComments=this.ViewComments.bind(this);
     this.CreateLoginPopup = this.CreateLoginPopup.bind(this);
     this.CreateSignUpPopup = this.CreateSignUpPopup.bind(this);
   }
@@ -43,13 +45,48 @@ class App extends React.Component{
       </React.StrictMode>
     );
   }
-  
+  ViewComments(post){
+  console.log(post.title+" was looked at by (username)");
+  let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true")
+  commentWindow.document.body.innerHTML=("<div id='root'></div>");
+  const subRoot = ReactDOM.createRoot(commentWindow.document.getElementById('root'));
+    subRoot.render(
+      <React.StrictMode>
+        <>
+        <div>
+        <h4>{post.posterUserName}</h4>
+      <h3>{post.title}</h3>
+      <p>{post.text}</p>
+      </div>
+        <textarea id='commentTextbox' placeholder='Comment...'></textarea>
+        <button onClick={()=>this.ExtractCommentText(commentWindow.document,post)}>Submit</button>
+        <div>{
+          this.state.allComments.filter(comment=>comment.postID==post.postID).map((comment)=>
+          Comment({
+            key:comment.postID,
+            posterUserName:post.posterUserName,
+            text:comment.text,
+            likes:comment.likes,
+            dislikes:comment.dislikes,
+          }))}
+        </div>
+          
+        </>
+      </React.StrictMode>
+    );
+  }
 
-  AddComment(post,text)
+  AddComment(message,post)
   {
     console.log(post.title+" was commented on by (username)");
-    //this.document.getElementById(post.key).querySelectorAll('comments').appendChild(<Comment posterUserName='username' text={text}/>)
-    
+    let newComment={ postID:post.key, text:message, likes:0, dislikes:0};
+    this.setState({allComments: (prevComments=>[newComment,...prevComments])(this.state.allComments)});
+  }
+
+    ExtractCommentText(postDocument,post){
+    let text=postDocument.getElementById("commentTextbox").value;
+    console.log("button pressed!");
+    this.AddComment(text,post);
   }
 
   ExtractText(postDocument){
@@ -128,11 +165,6 @@ class App extends React.Component{
     this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
   }
 
-  // SubmitNewComment(postTitle,user,message){ //not functional
-  //   let newPost={ title:postTitle, posterUserName:user, text:message, likes:0, dislikes:0};
-  //   this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
-  // }
-
   SubmitCommentInteraction(commentID, isLike){
     if (isLike){
       this.state.allPosts.find((comment)=>comment.commentID==commentID).likes += 1;
@@ -140,16 +172,8 @@ class App extends React.Component{
     else{
       this.state.allPosts.find((comment)=>comment.commentID==commentID).dislikes += 1;
     }
-    //this.setState({allPosts: this.state.allPosts});
   }
 
-
-  // SubmitLikePost(postID){ //outdated
-  //   let index = this.state.allPosts.findIndex((post)=>post.postID==postID);
-  //   let newObj = this.state.allPosts[index];
-  //   newObj.likes += 1
-  //   this.setState({allPosts: this.state.allPosts.with(index, newObj)});
-  // }
 
   SubmitPostInteraction(postID, isLike){
     if (isLike){
@@ -161,9 +185,6 @@ class App extends React.Component{
     this.setState({allPosts: this.state.allPosts});
   }
 
-  
-  
-
 
   Post(props){
     return(
@@ -172,14 +193,17 @@ class App extends React.Component{
       <h3>{props.title}</h3>
       <p>{props.text}</p>
       <button onClick={()=>{this.MakePostInteraction(props.key, true)}}>likes: {props.likes}</button> | <button onClick={()=>{this.MakePostInteraction(props.key, false)}}>dislikes: {props.dislikes}</button>
+      <div className='commentOptions'>
+      <button className='viewCommentsBtn' onClick={()=>this.ViewComments(props)}>View Comments</button>
+      </div>
     </div>);
   }
 
   render(){
     return (<>
       <div id="sidebar"><h2>Sidebar</h2>
-        <button id="LoginBtn" onClick={this.CreateLoginPopup}><b>P</b></button>
-        <button id="SignUpBtn" onClick={this.CreateSignUpPopup}><b>N</b></button>
+        <button id="LoginBtn" onClick={this.CreateLoginPopup}><b>Log In</b></button>
+        <button id="SignUpBtn" onClick={this.CreateSignUpPopup}><b>Sign Up</b></button>
       </div>
       <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={this.CreatePostPopup}><b>+</b></button></div>
       <div id="feed">{
@@ -204,7 +228,7 @@ class App extends React.Component{
 function Comment(props){
   return(
     <div className='comment'>
-      <h5>{props.posterUserName}</h5>
+      {/* <h5>{props.posterUserName}</h5> */}
       <p>{props.text}</p>
     </div>
   )
