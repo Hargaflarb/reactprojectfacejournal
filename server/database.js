@@ -153,11 +153,10 @@ async function usernameListQuery(){
     try {
         await sql.connect(sqlConfig);
         var usernameList = await sql.query(`SELECT Username FROM Profile ORDER BY ProfileID ASC`);
-        var output = []
+        var output = [];
         for (let i = 0; i < usernameList.recordset.length; i++){
-            output.push(usernameList.recordset[i].Username)
+            output[i+1] = usernameList.recordset[i].Username;
         }
-        console.log(output);
         return output
     }
     catch (err) {

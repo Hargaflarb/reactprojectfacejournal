@@ -19,7 +19,7 @@ class WSServer
   
   static connections = {};
   static users = {};
-  static usernames = {};
+  static usernames = [];
 
 
   static StartServer(){
@@ -133,10 +133,10 @@ class WSServer
         let formattedList = [];
         for (let i = 0; i < postHistoryList.recordset.length; i++){
           let post = postHistoryList.recordset[i];
-          //console.log(formattedList);
+          //console.log(this.usernames[post.ProfileID]);
           formattedList.push({
             profileID: post.ProfileID,
-            posterUserName: (()=>{this.usernames[post.ProfileID] == undefined ? "unknown" : this.usernames[post.ProfileID]})(),
+            posterUserName: (()=>{return this.usernames[post.ProfileID] === undefined ? "unknown" : this.usernames[post.ProfileID]})(),
             message_type: "post",
             title: post.PostTitle,
             text: post.PostText,
