@@ -100,6 +100,7 @@ class WSServer
       case "comment":
         let commentID = addCommentQuery(received.profileID, received.message.text, received.message.postID);
         commentID.then(function(result){received.commentID = result})
+        received.user = this.users[received.profileID];
         return received;
 
       case "post-like":

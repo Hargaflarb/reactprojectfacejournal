@@ -37,6 +37,7 @@ class WSClient extends React.Component
         this.client.addEventListener("open", event => {
             this.SendNotice("Connection Established");
             // console.log("connection opened");
+            this.RequestPostHistory();
         });
         
         this.client.addEventListener("message", event => {
@@ -47,6 +48,7 @@ class WSClient extends React.Component
         this.client.addEventListener("close", event =>{
             console.log("server closed or crashed.");
         });
+
     }
 
 

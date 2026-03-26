@@ -12,6 +12,10 @@ class App extends React.Component{
         // TemplatePost(), TemplatePost(),TemplatePost(),TemplatePost(),TemplatePost()
       ], 
       allComments:[],
+      ],
+      postInteractions:[
+
+      ],
       client: props.client.ReferanceExchange(this)
     }
 
@@ -20,6 +24,8 @@ class App extends React.Component{
     this.ViewComments=this.ViewComments.bind(this);
     this.CreateLoginPopup = this.CreateLoginPopup.bind(this);
     this.CreateSignUpPopup = this.CreateSignUpPopup.bind(this);
+    this.DoBold = this.DoBold.bind(this);
+    this.SubmitNewPost = this.SubmitNewPost.bind(this);
   }
 
 
@@ -156,13 +162,25 @@ class App extends React.Component{
 
   //likes and dislikes
   MakePostInteraction(postID, isLike){
-    this.state.client.SendPostLike(postID, isLike);
+    let interactions = this.state.postInteractions[postID]
+    if (!(isLike ? interactions.liked : interactions.disliked)){
+      this.state.client.SendPostLike(postID, isLike);
+      
+      if (isLike){
+        this.state.postInteractions[postID].liked = true;
+      }
+      else{
+        this.state.postInteractions[postID].disliked = true;
+      }
+    }
   }
 
 
   SubmitNewPost(user,postID,postTitle,message){
     let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:0, dislikes:0};
     this.setState({allPosts: (prevPosts=>[newPost,...prevPosts])(this.state.allPosts)});
+    //this.setState({postInteractions: (interactions => {interactions[postID] = {liked: false, disliked: false};})(this.state.postInteractions)})
+    this.state.postInteractions[postID] = {liked: false, disliked: false};
   }
 
   SubmitCommentInteraction(commentID, isLike){
@@ -173,7 +191,6 @@ class App extends React.Component{
       this.state.allPosts.find((comment)=>comment.commentID==commentID).dislikes += 1;
     }
   }
-
 
   SubmitPostInteraction(postID, isLike){
     if (isLike){
@@ -192,11 +209,16 @@ class App extends React.Component{
       <h4>{props.posterUserName}</h4>
       <h3>{props.title}</h3>
       <p>{props.text}</p>
-      <button onClick={()=>{this.MakePostInteraction(props.key, true)}}>likes: {props.likes}</button> | <button onClick={()=>{this.MakePostInteraction(props.key, false)}}>dislikes: {props.dislikes}</button>
+       <button onClick={()=>{this.MakePostInteraction(props.key, true)}}>{this.DoBold(`Likes: ${props.likes}`, props.key, true)}</button> | <button onClick={()=>{this.MakePostInteraction(props.key, false)}}>{this.DoBold(`dislikes: ${props.dislikes}`, props.key, false)}</button>
       <div className='commentOptions'>
       <button className='viewCommentsBtn' onClick={()=>this.ViewComments(props)}>View Comments</button>
       </div>
     </div>);
+  }
+
+  DoBold(text, postID, intrctn){
+    let intrctns = this.state.postInteractions[postID]; 
+    return (intrctn ? intrctns.liked : intrctns.disliked) ? <b>{text}</b> : <div>{text}</div>;
   }
 
   render(){
@@ -233,7 +255,6 @@ function Comment(props){
     </div>
   )
 }
-
 
 
 export default App;
