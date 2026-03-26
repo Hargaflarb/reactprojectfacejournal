@@ -48,6 +48,7 @@ class WSClient extends React.Component
         this.client.addEventListener("close", event =>{
             console.log("server closed or crashed.");
         });
+
     }
 
 

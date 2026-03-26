@@ -57,7 +57,6 @@ async function addCommentQuery(profileID, text, postID) {
 
 async function likePostQuery(postID, value) {
     try {
-        console.log(value);
         let isLike;
         if (value){
             isLike = "Likes"
@@ -65,7 +64,6 @@ async function likePostQuery(postID, value) {
         else{
             isLike = "Dislikes"
         }
-        console.log(isLike);
         await sql.connect(sqlConfig);
         const result = await sql.query(`UPDATE Post SET ${isLike} = ${isLike} + 1 WHERE PostID = ${postID}`);
         console.dir(result);
@@ -77,7 +75,6 @@ async function likePostQuery(postID, value) {
 
 async function likeCommentQuery(commentID, value){
      try {
-        console.log(value);
         let isLike;
         if (value){
             isLike = "Likes"
@@ -85,7 +82,6 @@ async function likeCommentQuery(commentID, value){
         else{
             isLike = "Dislikes"
         }
-        console.log(isLike);
         await sql.connect(sqlConfig);
         const result = await sql.query(`UPDATE Comment SET ${isLike} = ${isLike} + 1 WHERE CommentID = ${commentID}`);
         console.dir(result);
