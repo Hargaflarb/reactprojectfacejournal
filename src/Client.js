@@ -238,7 +238,9 @@ class WSClient extends React.Component
             case "post-history":
                 received.postHistoryList.forEach(post => {
                     //Post(post.message.text, post.profileID, post.postID);
-                    this.app.SubmitNewPost(post.profileID, post.postID, received.message.title, post.message.text);
+                    this.app.SubmitNewPost(post.profileID, post.postID, received.message.title, post.message.text, post.likes, post.dislikes);
+
+
                 });
                 break;
 

@@ -18,6 +18,7 @@ class WSServer
   
   static connections = {};
   static users = {};
+  static usernames = {};
 
 
   static StartServer(){
@@ -116,7 +117,7 @@ class WSServer
         received.message.password; // the password
         // database stuff here
         received.profileID = 1; // the profileID, set to null if login failed
-        this.users[received.profileID] = received.message.username;
+        this.usernames[received.profileID] = received.message.username;
         this.MonoSend(received, uuid);
         break;
 
@@ -125,7 +126,7 @@ class WSServer
         received.message.password; // the password
         // database stuff here
         received.profileID = 1; // the profileID, set to null if login failed
-        this.users[received.profileID] = received.message.username;
+        this.usernames[received.profileID] = received.message.username;
         this.MonoSend(received, uuid);
         break;
 
