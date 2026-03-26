@@ -16,7 +16,11 @@ class App extends React.Component{
       postInteractions:[
 
       ],
-      client: props.client.ReferanceExchange(this)
+      commentInteractions:[
+
+      ],
+      client: props.client.ReferanceExchange(this),
+      darkmode: false
     }
 
     this.CreatePostPopup = this.CreatePostPopup.bind(this);
@@ -26,6 +30,7 @@ class App extends React.Component{
     this.CreateSignUpPopup = this.CreateSignUpPopup.bind(this);
     this.DoBold = this.DoBold.bind(this);
     this.SubmitNewPost = this.SubmitNewPost.bind(this);
+    this.ToggleDarkMode = this.ToggleDarkMode.bind(this);
   }
 
 
@@ -175,6 +180,21 @@ class App extends React.Component{
     }
   }
 
+  //likes and dislikes
+  MakeCommentInteraction(commentID, isLike){
+    let interactions = this.state.commentInteractions[commentID]
+    if (!(isLike ? interactions.liked : interactions.disliked)){
+      this.state.client.SendCommentLike(commentID, isLike);
+      
+      if (isLike){
+        this.state.commentInteractions[commentID].liked = true;
+      }
+      else{
+        this.state.commentInteractions[commentID].disliked = true;
+      }
+    }
+  }
+
 
   SubmitNewPost(user,postID,postTitle,message, likes=0, dislikes=0){
     let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:likes, dislikes:dislikes};
@@ -184,9 +204,20 @@ class App extends React.Component{
   }
 
   SubmitNewPost(posts){
-    this.setState({allPosts: (prevPosts => prevPosts.concat(posts))(this.state.allPosts)});
+    this.setState({allPosts: (prevPosts=>prevPosts.concat(posts))(this.state.allPosts)});
   }
-  
+    // let newPost={ posterUserName:user, postID:postID, title:postTitle, text:message, likes:likes, dislikes:dislikes};
+    //this.setState({postInteractions: (interactions => {interactions[postID] = {liked: false, disliked: false};})(this.state.postInteractions)})
+    // this.state.postInteractions[postID] = {liked: false, disliked: false};
+
+
+  // SubmitNewComment(user,commentID,postID,message){ //not functional
+  //   let newComment={ posterUserName:user, commentID:commentID, text:message, likes:0, dislikes:0};
+  //   this.setState({allPosts: (posts=>{posts})(this.state.allPosts)});
+
+  //   this.state.commentInteractions[commentID] = {liked: false, disliked: false};
+  // }
+
   SubmitCommentInteraction(commentID, isLike){
     if (isLike){
       this.state.allPosts.find((comment)=>comment.commentID==commentID).likes += 1;
@@ -204,6 +235,38 @@ class App extends React.Component{
       this.state.allPosts.find((post)=>post.postID==postID).dislikes += 1;
     }
     this.setState({allPosts: this.state.allPosts});
+  }
+
+  
+  
+
+  ToggleDarkMode(){
+    this.setState({darkmode: !this.state.darkmode});
+
+    if (this.state.darkmode){
+      changeBGColor(window.document.getElementsByClassName("App-header"), "hsl(220, 13%, 82%)");
+      changeColor(window.document.getElementsByClassName("App-link"), "hsl(193, 95%, 32%)");
+      window.document.getElementById("header").style.backgroundColor = "hsl(0, 0%, 34%)";
+      window.document.getElementById("sidebar").style.backgroundColor = "hsl(0, 0%, 17%)";
+      window.document.getElementById("feed").style.backgroundColor = "hsl(0, 0%, 50%)";
+      changeBGColor(window.document.getElementsByClassName("post"), "hsl(0, 0%, 34%)");
+      // changeBGColor(window.document.getElementsByClassName("post:hover"), "hsl(0, 0%, 17%)");
+      window.document.getElementById("addPostBtn").style.backgroundColor = "hsl(0, 0%, 17%)";
+      changeBGColor(window.document.getElementsByClassName("newCommentField"), "hsl(0, 0%, 17%)");
+      // window.document.getElementsByClassName("newCommentField:hover").style.backgroundColor = "hsl(0, 0%, 0%)";
+    }
+    else{
+      changeBGColor(window.document.getElementsByClassName("App-header"), "#282c34");
+      changeColor(window.document.getElementsByClassName("App-link"), "#61dafb");
+      window.document.getElementById("header").style.backgroundColor = "#a9a9a9";
+      window.document.getElementById("sidebar").style.backgroundColor = "#d3d3d3";
+      window.document.getElementById("feed").style.backgroundColor = "#808080";
+      changeBGColor(window.document.getElementsByClassName("post"), "#a9a9a9");
+      // changeBGColor(window.document.getElementsByClassName("post:hover"), "#d3d3d3");
+      window.document.getElementById("addPostBtn").style.backgroundColor = "#d3d3d3";
+      changeBGColor(window.document.getElementsByClassName("newCommentField"), "#d3d3d3");
+      // window.document.getElementsByClassName("newCommentField:hover").style.backgroundColor = "#ffffff";
+    }
   }
 
 
@@ -230,6 +293,7 @@ class App extends React.Component{
       <div id="sidebar"><h2>Sidebar</h2>
         <button id="LoginBtn" onClick={this.CreateLoginPopup}><b>Log In</b></button>
         <button id="SignUpBtn" onClick={this.CreateSignUpPopup}><b>Sign Up</b></button>
+        <button id="DarkModeBtn" onClick={this.ToggleDarkMode}><b>D</b></button>
       </div>
       <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={this.CreatePostPopup}><b>+</b></button></div>
       <div id="feed">{
@@ -260,5 +324,20 @@ function Comment(props){
   )
 }
 
+function changeBGColor(coll, color){
+
+    for(var i=0, len=coll.length; i<len; i++)
+    {
+        coll[i].style["background-color"] = color;
+    }
+}
+
+function changeColor(coll, color){
+
+    for(var i=0, len=coll.length; i<len; i++)
+    {
+        coll[i].style["color"] = color;
+    }
+}
 
 export default App;
