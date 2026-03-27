@@ -38,9 +38,11 @@ class App extends React.Component{
 
 
   ViewComments(post){
-  let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true")
-  commentWindow.document.body.innerHTML=("<div id='root'></div>");
-  const subRoot = ReactDOM.createRoot(commentWindow.document.getElementById('root'));
+    this.state.client.RequestCommentHistory(post.postID);
+    
+    let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true");
+    commentWindow.document.body.innerHTML=("<div id='root'></div>");
+    const subRoot = ReactDOM.createRoot(commentWindow.document.getElementById('root'));
     subRoot.render(
       <React.StrictMode>
         <>
@@ -217,6 +219,10 @@ class App extends React.Component{
   }
 
   AddComments(comments){
+    this.setState({allComments: (prevComments=>prevComments.concat(comments))(this.state.allComments)});
+    comments.forEach(comment => {
+      this.state.commentInteractions[comment.commentID] = {liked: false, disliked: false};
+    });
 
   }
 

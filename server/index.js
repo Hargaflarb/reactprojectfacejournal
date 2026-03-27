@@ -157,6 +157,33 @@ class WSServer
         this.MonoSend(responds, uuid);
         break;
 
+      case "comment-history":
+        let commentHistoryList = await postHistoryQuery();
+        
+        let formattedCommentList = [];
+        for (let i = 0; i < commentHistoryList.recordset.length; i++){
+          let comment = commentHistoryList.recordset[i];
+          formattedCommentList.push({
+            profileID: comment.ProfileID,
+            posterUserName: (()=>{return this.usernames[comment.ProfileID] === undefined ? "unknown" : this.usernames[comment.ProfileID]})(),
+            message_type: "comment",
+            text: comment.CommentText,
+            likes: comment.Likes,
+            dislikes: comment.Dislikes,
+            commentID: comment.CommentID,
+            postID: comment.PostID
+          })
+        };
+
+        let commentResponds = 
+        {
+          message_type: "comment-history",
+          commentHistoryList: formattedCommentList
+        }
+        this.MonoSend(commentResponds, uuid);
+
+        break;
+
       case "notice":
         console.log(received.message);
         this.MonoSend(received, uuid);

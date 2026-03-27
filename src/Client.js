@@ -93,6 +93,19 @@ class WSClient extends React.Component
         
         this.client.send(jsonMessage);
     }
+
+    RequestCommentHistory(postID){
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "post-history",
+                message:{
+                    postID: postID
+                }
+            }
+        )
+        
+        this.client.send(jsonMessage);
+    }
     
     SendPost(title, text){
         if (this.profile.profileID != null){
@@ -237,6 +250,11 @@ class WSClient extends React.Component
             case "post-history":
                 // console.log(received.postHistoryList);
                 this.app.SubmitNewPosts(received.postHistoryList);
+                
+                break;
+
+            case "comment-history":
+                // this.app.SubmitNewPosts(received.postHistoryList);
                 break;
 
             case "notice":
