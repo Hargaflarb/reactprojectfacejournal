@@ -178,7 +178,8 @@ class WSServer
         let commentResponds = 
         {
           message_type: "comment-history",
-          commentHistoryList: formattedCommentList
+          commentHistoryList: formattedCommentList,
+          postID: received.message.postID
         }
         this.MonoSend(commentResponds, uuid);
 

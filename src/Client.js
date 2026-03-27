@@ -254,7 +254,7 @@ class WSClient extends React.Component
                 break;
 
             case "comment-history":
-                // this.app.SubmitNewPosts(received.postHistoryList);
+                this.app.AddComments(received.postID, received.commentHistoryList);
                 break;
 
             case "notice":

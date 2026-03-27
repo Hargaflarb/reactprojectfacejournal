@@ -39,7 +39,7 @@ class App extends React.Component{
 
   ViewComments(post){
     this.state.client.RequestCommentHistory(post.postID);
-    
+
     let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true");
     commentWindow.document.body.innerHTML=("<div id='root'></div>");
     const subRoot = ReactDOM.createRoot(commentWindow.document.getElementById('root'));
@@ -54,7 +54,7 @@ class App extends React.Component{
         <textarea id='commentTextbox' placeholder='Comment...'></textarea>
         <button onClick={()=>this.ExtractCommentText(commentWindow.document,post.postID)}>Submit</button>
         <div>{
-          this.state.allComments.filter(comment=>comment.postID==post.postID).map((comment)=>
+          this.state.allComments.filter(comment=>comment.postID == post.postID).map((comment)=>
           Comment({
             commentID:comment.commentID,
             postID:comment.postID,
@@ -218,7 +218,7 @@ class App extends React.Component{
     this.state.commentInteractions[commentID] = {liked: false, disliked: false};
   }
 
-  AddComments(comments){
+  AddComments(postID, comments){
     this.setState({allComments: (prevComments=>prevComments.concat(comments))(this.state.allComments)});
     comments.forEach(comment => {
       this.state.commentInteractions[comment.commentID] = {liked: false, disliked: false};
@@ -327,8 +327,9 @@ class App extends React.Component{
 function Comment(props){
   return(
     <div className='comment'>
-      {/* <h5>{props.posterUserName}</h5> */}
+      <h5>{props.posterUserName}</h5>
       <p>{props.text}</p>
+      <button>{`Likes: ${props.likes}`}</button> | <button>{`dislikes: ${props.dislikes}`}</button>
     </div>
   )
 }
