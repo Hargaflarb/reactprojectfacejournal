@@ -2,7 +2,7 @@
 // to start the server, write "node index.js" in the terminal, while in the server directory.
 // if you're unsure of how it works hit me up.
 
-const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, signupQuery, postHistoryQuery, usernameListQuery} = require('./database.js');
+const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, signupQuery, postHistoryQuery, usernameListQuery, commentListQuery} = require('./database.js');
 const { WebSocketServer } = require("ws");
 const http = require("http");
 const uuidv4 = require("uuid").v4;
@@ -56,7 +56,6 @@ class WSServer
     const responds = await this.GetServerResponse(message, uuid);
 
 
-    // user.state = message;
     if (responds != null){
       WSServer.broadcast(responds);
     }
@@ -79,7 +78,7 @@ class WSServer
       connection.send(message);
     });
 
-    console.log("broadcast:");
+    console.log(`\nbroadcast:`);
     console.log(broadcastObject);
   }
 
@@ -96,13 +95,14 @@ class WSServer
       case "post":
         let postID = await addPostQuery(received.profileID, received.message.title, received.message.text);
         received.postID = postID;
-        received.user = this.users[received.profileID];
+        received.user = this.usernames[received.profileID];
         return received;
 
       case "comment":
-        let commentID = addCommentQuery(received.profileID, received.message.text, received.message.postID);
-        commentID.then(function(result){received.commentID = result})
-        received.user = this.users[received.profileID];
+        let commentID = await addCommentQuery(received.profileID, received.message.text, received.message.postID);
+        // commentID.then(function(result){received.commentID = result})
+        received.commentID = commentID;
+        received.user = this.usernames[received.profileID];
         return received;
 
       case "post-like":
@@ -116,25 +116,27 @@ class WSServer
       case "login":
         received.profileID = await loginQuery(received.message.username, received.message.password)
         this.usernames[received.profileID] = received.message.username;
+        console.log(received);
         this.MonoSend(received, uuid);
-        console.log(received.profileID);
         break;
 
       case "signup":
         received.profileID = await signupQuery(received.message.username, received.message.password)
         this.usernames[received.profileID] = received.message.username;
+        console.log(received);
         this.MonoSend(received, uuid);
-        console.log(received.profileID);
         break;
 
       case "post-history":
         this.usernames = await usernameListQuery();
-        console.log(this.usernames);
         let postHistoryList = await postHistoryQuery();
+
+        console.log("\naccounts:")
+        console.log(this.usernames);
+        
         let formattedList = [];
         for (let i = 0; i < postHistoryList.recordset.length; i++){
           let post = postHistoryList.recordset[i];
-          //console.log(this.usernames[post.ProfileID]);
           formattedList.push({
             profileID: post.ProfileID,
             posterUserName: (()=>{return this.usernames[post.ProfileID] === undefined ? "unknown" : this.usernames[post.ProfileID]})(),
@@ -146,12 +148,42 @@ class WSServer
             postID: post.PostID
           })
         };
+
         let responds = 
         {
           message_type: "post-history",
           postHistoryList:formattedList
         }
         this.MonoSend(responds, uuid);
+        break;
+
+      case "comment-history":
+        let commentHistoryList = await commentListQuery(received.message.postID);
+        
+        let formattedCommentList = [];
+        for (let i = 0; i < commentHistoryList.recordset.length; i++){
+          let comment = commentHistoryList.recordset[i];
+          formattedCommentList.push({
+            profileID: comment.ProfileID,
+            posterUserName: (()=>{return this.usernames[comment.ProfileID] === undefined ? "unknown" : this.usernames[comment.ProfileID]})(),
+            message_type: "comment",
+            text: comment.CommentText,
+            likes: comment.Likes,
+            dislikes: comment.Dislikes,
+            commentID: comment.CommentID,
+            postID: comment.PostID
+          })
+        };
+        console.log(formattedCommentList);
+
+        let commentResponds = 
+        {
+          message_type: "comment-history",
+          commentHistoryList: formattedCommentList,
+          postID: received.message.postID
+        }
+        this.MonoSend(commentResponds, uuid);
+
         break;
 
       case "notice":

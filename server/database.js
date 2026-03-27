@@ -46,8 +46,8 @@ async function addCommentQuery(profileID, text, postID) {
         await sql.connect(sqlConfig);
         const result = await sql.query(`INSERT INTO Comment VALUES ('${profileID}', '${text}', '0', '0', '${postID}')`);
         console.dir(result);
-        var postID = await sql.query(`SELECT * FROM Comment ORDER BY CommentID DESC`);
-        var id = postID.recordset[0].CommentID;
+        var CommentID = await sql.query(`SELECT * FROM Comment ORDER BY CommentID DESC`);
+        var id = CommentID.recordset[0].CommentID;
         return id;
     }
     catch (err) {
@@ -95,7 +95,7 @@ async function loginQuery(username, password){
     try {
         await sql.connect(sqlConfig);
         var result = await sql.query(`SELECT * FROM Profile WHERE Username = '${username}'`);
-        console.dir(result);
+        // console.dir(result);
         if (result.recordset[0].Passwrd === password){
             console.log("Correct password!")
         }
@@ -160,4 +160,16 @@ async function usernameListQuery(){
     }
 }
 
-module.exports = { testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, signupQuery, postHistoryQuery, usernameListQuery, sqlConfig};
+async function commentListQuery(postID){
+     try {
+        await sql.connect(sqlConfig);
+        var commentList = await sql.query(`SELECT * FROM Comment WHERE PostID = '${postID}'`);
+        console.log(commentList);
+        return commentList;
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+module.exports = { testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, signupQuery, postHistoryQuery, usernameListQuery, commentListQuery, sqlConfig};
