@@ -39,7 +39,12 @@ class App extends React.Component{
 
 
   ViewComments(post){
-    this.state.client.RequestCommentHistory(post.postID);
+    let hasComments = this.state.allComments[post.postID] == undefined;
+    console.log(this.state.allComments[post.postID]);
+    console.log(hasComments);
+    if (hasComments){
+      this.state.client.RequestCommentHistory(post.postID);
+    }
 
     let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true");
     commentWindow.document.body.innerHTML=("<div id='root'></div>");
@@ -55,7 +60,8 @@ class App extends React.Component{
         <textarea id='commentTextbox' placeholder='Comment...'></textarea>
         <button onClick={()=>this.ExtractCommentText(commentWindow.document,post.postID)}>Submit</button>
         <div>{
-          this.state.allComments.filter(comment=>comment.postID == post.postID).map((comment)=>
+          // this.state.allComments.filter(comment=>comment.postID == post.postID).map((comment)=>
+          (this.state.allComments[post.postID] != undefined) ? this.state.allComments[post.postID].map((comment)=>
           Comment({
             commentID:comment.commentID,
             postID:comment.postID,
@@ -63,7 +69,7 @@ class App extends React.Component{
             text:comment.text,
             likes:comment.likes,
             dislikes:comment.dislikes,
-          }))}
+          })) : "This post has no comments."}
         </div>
           
         </>
@@ -214,13 +220,19 @@ class App extends React.Component{
   {
     // console.log("post ID: " + postID + ", was commented on by " + user);
     let newComment={ posterUserName:user, commentID: commentID, postID:postID, text:text, likes:likes, dislikes:dislikes};
-    this.setState({allComments: (prevComments=>[newComment,...prevComments])(this.state.allComments)});
+    this.setState({allComments: (prevComments=>{
+      prevComments[postID].push(newComment);
+      return prevComments;
+    })(this.state.allComments)});
     
     this.state.commentInteractions[commentID] = {liked: false, disliked: false};
   }
 
   AddComments(postID, comments){
-    this.setState({allComments: (prevComments=>prevComments.concat(comments))(this.state.allComments)});
+    this.setState({allComments: (prevComments=>{
+      prevComments[postID] = comments;
+      return prevComments;
+    })(this.state.allComments)});
     comments.forEach(comment => {
       this.state.commentInteractions[comment.commentID] = {liked: false, disliked: false};
     });
