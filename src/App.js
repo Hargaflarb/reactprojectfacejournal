@@ -40,8 +40,6 @@ class App extends React.Component{
 
   ViewComments(post){
     let hasComments = this.state.allComments[post.postID] == undefined;
-    console.log(this.state.allComments[post.postID]);
-    console.log(hasComments);
     if (hasComments){
       this.state.client.RequestCommentHistory(post.postID);
     }
@@ -221,10 +219,12 @@ class App extends React.Component{
     // console.log("post ID: " + postID + ", was commented on by " + user);
     let newComment={ posterUserName:user, commentID: commentID, postID:postID, text:text, likes:likes, dislikes:dislikes};
     this.setState({allComments: (prevComments=>{
+      if (prevComments[postID] == undefined){
+        prevComments[postID] = [];
+      }
       prevComments[postID].push(newComment);
       return prevComments;
     })(this.state.allComments)});
-    
     this.state.commentInteractions[commentID] = {liked: false, disliked: false};
   }
 

@@ -207,7 +207,7 @@ class WSClient extends React.Component
                 break;
 
             case "comment":
-                this.app.AddComment(received.user, received.commentID, received.postID, received.message.text);
+                this.app.AddComment(received.user, received.commentID, received.message.postID, received.message.text);
                 break;
 
             case "post-like":
