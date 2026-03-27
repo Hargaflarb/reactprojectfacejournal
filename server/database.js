@@ -160,4 +160,17 @@ async function usernameListQuery(){
     }
 }
 
-module.exports = { testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, signupQuery, postHistoryQuery, usernameListQuery, sqlConfig};
+async function commentListQuery(postID){
+     try {
+        await sql.connect(sqlConfig);
+        var commentList = await sql.query(`SELECT * FROM Comment WHERE PostID = '${postID}'`);
+        console.log(commentList);
+        var output = [];
+        return output
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+module.exports = { testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, signupQuery, postHistoryQuery, usernameListQuery, commentListQuery, sqlConfig};
