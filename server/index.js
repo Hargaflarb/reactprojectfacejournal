@@ -2,7 +2,7 @@
 // to start the server, write "node index.js" in the terminal, while in the server directory.
 // if you're unsure of how it works hit me up.
 
-const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, signupQuery, postHistoryQuery, usernameListQuery} = require('./database.js');
+const { sqlConfig, testQuery, addPostQuery, addCommentQuery, likePostQuery, likeCommentQuery, loginQuery, signupQuery, postHistoryQuery, usernameListQuery, commentListQuery} = require('./database.js');
 const { WebSocketServer } = require("ws");
 const http = require("http");
 const uuidv4 = require("uuid").v4;
@@ -158,7 +158,7 @@ class WSServer
         break;
 
       case "comment-history":
-        let commentHistoryList = await postHistoryQuery();
+        let commentHistoryList = await commentListQuery(received.message.postID);
         
         let formattedCommentList = [];
         for (let i = 0; i < commentHistoryList.recordset.length; i++){
@@ -174,6 +174,7 @@ class WSServer
             postID: comment.PostID
           })
         };
+        console.log(formattedCommentList);
 
         let commentResponds = 
         {
