@@ -188,7 +188,7 @@ class App extends React.Component{
     let interactions = this.state.commentInteractions[commentID]
     if (!(isLike ? interactions.liked : interactions.disliked)){
       this.state.client.SendCommentLike(commentID, isLike);
-      
+      console.log("Liked")
       if (isLike){
         this.state.commentInteractions[commentID].liked = true;
       }
@@ -342,7 +342,7 @@ function Comment(props){
     <div className='comment'>
       <h5>{props.posterUserName}</h5>
       <p>{props.text}</p>
-      <button>{`Likes: ${props.likes}`}</button> | <button>{`dislikes: ${props.dislikes}`}</button>
+      <button onClick={MakeCommentInteraction(props.commentID, true)}>{`Likes: ${props.likes}`}</button> | <button onClick={MakeCommentInteraction(props.commentID, false)}>{`dislikes: ${props.dislikes}`}</button>
     </div>
   )
 }
