@@ -38,11 +38,12 @@ class App extends React.Component{
 
 
 
-  async ViewComments(post){
-  console.log(post.title+" was looked at by (username)");
-  let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true")
-  commentWindow.document.body.innerHTML=("<div id='root'></div>");
-  const subRoot = ReactDOM.createRoot(commentWindow.document.getElementById('root'));
+  ViewComments(post){
+    this.state.client.RequestCommentHistory(post.postID);
+    
+    let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true");
+    commentWindow.document.body.innerHTML=("<div id='root'></div>");
+    const subRoot = ReactDOM.createRoot(commentWindow.document.getElementById('root'));
     subRoot.render(
       <React.StrictMode>
         <>
@@ -52,11 +53,11 @@ class App extends React.Component{
       <p>{post.text}</p>
       </div>
         <textarea id='commentTextbox' placeholder='Comment...'></textarea>
-        <button onClick={()=>this.ExtractCommentText(commentWindow.document,post)}>Submit</button>
+        <button onClick={()=>this.ExtractCommentText(commentWindow.document,post.postID)}>Submit</button>
         <div>{
           this.state.allComments.filter(comment=>comment.postID==post.postID).map((comment)=>
           Comment({
-            key:comment.commentID,
+            commentID:comment.commentID,
             postID:comment.postID,
             posterUserName:comment.posterUserName,
             text:comment.text,
@@ -70,11 +71,9 @@ class App extends React.Component{
     );
   }
 
-  ExtractCommentText(postDocument,post){
+  ExtractCommentText(postDocument,postID){
     let text=postDocument.getElementById("commentTextbox").value;
-    console.log("button pressed!");
-    this.state.client.SendComment(post.postID, text);
-    // this.AddComment(post.postID, text);
+    this.state.client.SendComment(postID, text);
   }
 
   CreatePostPopup()
@@ -213,7 +212,7 @@ class App extends React.Component{
 
   AddComment(user, commentID, postID, text, likes=0, dislikes=0)
   {
-    console.log("post ID: " + postID + ", was commented on by " + user);
+    // console.log("post ID: " + postID + ", was commented on by " + user);
     let newComment={ posterUserName:user, commentID: commentID, postID:postID, text:text, likes:likes, dislikes:dislikes};
     this.setState({allComments: (prevComments=>[newComment,...prevComments])(this.state.allComments)});
     
@@ -221,7 +220,11 @@ class App extends React.Component{
   }
 
   AddComments(comments){
-    
+    this.setState({allComments: (prevComments=>prevComments.concat(comments))(this.state.allComments)});
+    comments.forEach(comment => {
+      this.state.commentInteractions[comment.commentID] = {liked: false, disliked: false};
+    });
+
   }
 
   SubmitCommentInteraction(commentID, isLike){
@@ -283,7 +286,7 @@ class App extends React.Component{
       <h4>{props.posterUserName}</h4>
       <h3>{props.title}</h3>
       <p>{props.text}</p>
-       <button onClick={()=>{this.MakePostInteraction(props.key, true)}}>{this.DoBold(`Likes: ${props.likes}`, props.key, true)}</button> | <button onClick={()=>{this.MakePostInteraction(props.key, false)}}>{this.DoBold(`dislikes: ${props.dislikes}`, props.key, false)}</button>
+       <button onClick={()=>{this.MakePostInteraction(props.postID, true)}}>{this.DoBold(`Likes: ${props.likes}`, props.postID, true)}</button> | <button onClick={()=>{this.MakePostInteraction(props.postID, false)}}>{this.DoBold(`dislikes: ${props.dislikes}`, props.postID, false)}</button>
       <div className='commentOptions'>
       <button className='viewCommentsBtn' onClick={()=>this.ViewComments(props)}>View Comments</button>
       </div>
@@ -306,9 +309,9 @@ class App extends React.Component{
       <div id="feed">{
         this.state.allPosts.map((post)=>
           this.Post({
-            key:post.postID,
-            title:post.title,
+            postID:post.postID,
             posterUserName:post.posterUserName,
+            title:post.title,
             text:post.text,
             likes:post.likes,
             dislikes:post.dislikes,

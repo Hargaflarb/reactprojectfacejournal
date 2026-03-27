@@ -46,8 +46,8 @@ async function addCommentQuery(profileID, text, postID) {
         await sql.connect(sqlConfig);
         const result = await sql.query(`INSERT INTO Comment VALUES ('${profileID}', '${text}', '0', '0', '${postID}')`);
         console.dir(result);
-        var postID = await sql.query(`SELECT * FROM Comment ORDER BY CommentID DESC`);
-        var id = postID.recordset[0].CommentID;
+        var CommentID = await sql.query(`SELECT * FROM Comment ORDER BY CommentID DESC`);
+        var id = CommentID.recordset[0].CommentID;
         return id;
     }
     catch (err) {

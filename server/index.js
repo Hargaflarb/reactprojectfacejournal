@@ -95,14 +95,14 @@ class WSServer
       case "post":
         let postID = await addPostQuery(received.profileID, received.message.title, received.message.text);
         received.postID = postID;
-        received.user = this.users[received.profileID];
+        received.user = this.usernames[received.profileID];
         return received;
 
       case "comment":
-        let commentID = await addCommentQuery(received.profileID, received.message.text, received.postID);
+        let commentID = await addCommentQuery(received.profileID, received.message.text, received.message.postID);
         // commentID.then(function(result){received.commentID = result})
         received.commentID = commentID;
-        received.user = this.users[received.profileID];
+        received.user = this.usernames[received.profileID];
         return received;
 
       case "post-like":
@@ -130,7 +130,7 @@ class WSServer
       case "post-history":
         this.usernames = await usernameListQuery();
         let postHistoryList = await postHistoryQuery();
-        
+
         console.log("\naccounts:")
         console.log(this.usernames);
         
@@ -155,6 +155,33 @@ class WSServer
           postHistoryList:formattedList
         }
         this.MonoSend(responds, uuid);
+        break;
+
+      case "comment-history":
+        let commentHistoryList = await postHistoryQuery();
+        
+        let formattedCommentList = [];
+        for (let i = 0; i < commentHistoryList.recordset.length; i++){
+          let comment = commentHistoryList.recordset[i];
+          formattedCommentList.push({
+            profileID: comment.ProfileID,
+            posterUserName: (()=>{return this.usernames[comment.ProfileID] === undefined ? "unknown" : this.usernames[comment.ProfileID]})(),
+            message_type: "comment",
+            text: comment.CommentText,
+            likes: comment.Likes,
+            dislikes: comment.Dislikes,
+            commentID: comment.CommentID,
+            postID: comment.PostID
+          })
+        };
+
+        let commentResponds = 
+        {
+          message_type: "comment-history",
+          commentHistoryList: formattedCommentList
+        }
+        this.MonoSend(commentResponds, uuid);
+
         break;
 
       case "notice":
