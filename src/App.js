@@ -39,7 +39,6 @@ class App extends React.Component{
 
 
   async ViewComments(post){
-   await commentListQuery();
   console.log(post.title+" was looked at by (username)");
   let commentWindow=window.open("","commentsWndow","width=400,height=200 popup=true")
   commentWindow.document.body.innerHTML=("<div id='root'></div>");
