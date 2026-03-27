@@ -97,7 +97,7 @@ class WSClient extends React.Component
     RequestCommentHistory(postID){
         let jsonMessage = JSON.stringify(
             {
-                message_type: "post-history",
+                message_type: "comment-history",
                 message:{
                     postID: postID
                 }
