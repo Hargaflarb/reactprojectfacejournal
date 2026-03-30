@@ -166,12 +166,13 @@ class WSClient extends React.Component
         return false;
     }
     
-    SendCommentLike(commentID, isLike){
+    SendCommentLike(postID, commentID, isLike){
         if (this.profile.profileID != null){
             let jsonMessage = JSON.stringify(
                 {
                     message_type: "comment-like",
                     message:{
+                        postID: postID,
                         commentID: commentID,
                         isLike: isLike
                     }
@@ -215,7 +216,7 @@ class WSClient extends React.Component
                 break;
 
             case "comment-like":
-                this.app.MakeCommentInteraction(received.message.commentID, received.message.isLike)
+                this.app.SubmitCommentInteraction(received.message.postID, received.message.commentID, received.message.isLike)
                 break;
 
             case "login":
