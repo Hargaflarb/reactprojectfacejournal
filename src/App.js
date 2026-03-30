@@ -41,10 +41,9 @@ class App extends React.Component{
         <>
           <h1>New post</h1>
           <hr/>
-          <i><p id='remainingCharsCounter'>2000</p></i>
-          <input type="text" id="titleTextbox" placeholder='New Post Title' style={{backgroundColor: 'light-gray'}}></input>
+          <input type="text" id="titleTextbox" placeholder='New Post Title' style={{backgroundColor: 'light-gray'}} minLength={1} maxLength={100}></input>
           <br/>
-          <textarea id="contentTextbox" placeholder='Write your post here' style={{backgroundColor: 'light-gray', height:'70%',width:'98%', alignSelf:'center'}}></textarea>
+          <textarea id="contentTextbox" placeholder='Write your post here' style={{backgroundColor: 'light-gray', height:'70%',width:'98%', alignSelf:'center'}} minLength={1} maxLength={2000}></textarea>
           <br/>
           <button id="submitPostBtn" onClick={()=>this.ExtractText(postWindow.document)} style={{height:'8%', width:'20%', float:'right', fontSize:'100%'}}>Post</button>
         </>
@@ -70,7 +69,7 @@ class App extends React.Component{
           <p>{post.text}</p>
         </div>
         <br/>
-        <textarea id='commentTextbox' placeholder='Comment...' style={{position:'sticky', top:'100'}}></textarea>
+        <textarea id='commentTextbox' placeholder='Comment...' style={{position:'sticky', top:'100', width: "100%"}} minLength={1} maxLength={500}></textarea>
         <button onClick={()=>this.ExtractCommentText(commentWindow.document,post)} style={{position:'sticky', top:'100'}}>Submit</button>
         <div style={{overflow: 'scroll'}}>
         {
@@ -100,20 +99,35 @@ class App extends React.Component{
     let text=postDocument.getElementById("commentTextbox").value;
     postDocument.getElementById("commentTextbox").value="";
     console.log("button pressed!");
-    this.AddComment(text,post);
+    if(text.length<1){
+      window.open("","commentsWndow").alert("You need to put something in the comment field before you can comment on this post.")
+    }
+    else this.AddComment(text,post);
   }
 
   ExtractText(postDocument){
     let title=postDocument.getElementById("titleTextbox").value;
     let text=postDocument.getElementById("contentTextbox").value;
+    if(title.length<1){
+      window.open("","newPostWindow").alert("Your post must have a title before it can be submitted.")
+    }
+    else if(text.length<1){
+      window.open("","newPostWindow").alert("Your post must have text before it can be submitted.")
+    }
+    else{
     window.open("","newPostWindow").close();
     console.log("button pressed!");
     this.state.client.SendPost(title, text);
+    }
   }
 
   CreateLoginPopup(){
     let logInWindow=window.open("","LogInWindow","width=400,height=200 popup=true");
     logInWindow.document.body.innerHTML=("<div id='root'></div>");
+
+    logInWindow.document.getElementById("root").style.height="100%";
+    logInWindow.document.getElementById("root").style.width="100%";
+    logInWindow.document.body.style.backgroundColor="gray";
 
     const subRoot = ReactDOM.createRoot(logInWindow.document.getElementById('root'));
     subRoot.render(
@@ -121,9 +135,9 @@ class App extends React.Component{
         <>
           <h1>Log in</h1>
           <hr/>
-          <input type="text" id="usernameTextbox" placeholder='Username'></input>
+          <input type="text" id="usernameTextbox" placeholder='Username' minLength={1} maxLength={20}></input>
           <br/>
-          <input type="text" id="passwordTextbox" placeholder='Password'></input>
+          <input type="text" id="passwordTextbox" placeholder='Password' minLength={1} maxLength={100}></input>
       
           <button id="submitLoginBtn" onClick={()=>this.ExtractLogInDetails(logInWindow.document)}>Log In</button>
         </>
@@ -134,14 +148,26 @@ class App extends React.Component{
   ExtractLogInDetails(logInDocument){
     let username = logInDocument.getElementById("usernameTextbox").value;
     let password = logInDocument.getElementById("passwordTextbox").value;
-    window.open("","LogInWindow").close();
-    console.log("button pressed!");
-    this.state.client.RequestLogIn(username, password);
+    if(username.length<1){
+      window.open("","LogInWindow").alert("Please enter your username.")
+    }
+    else if(password.length<1){
+      window.open("","LogInWindow").alert("Please enter your password.")
+    }
+    else{
+      window.open("","LogInWindow").close();
+      console.log("button pressed!");
+      this.state.client.RequestLogIn(username, password);
+    }
   }
 
   CreateSignUpPopup(){
     let signUpWindow=window.open("","SignUpWindow","width=400,height=200 popup=true");
     signUpWindow.document.body.innerHTML=("<div id='root'></div>");
+
+    signUpWindow.document.getElementById("root").style.height="100%";
+    signUpWindow.document.getElementById("root").style.width="100%";
+    signUpWindow.document.body.style.backgroundColor="gray";
 
     const subRoot = ReactDOM.createRoot(signUpWindow.document.getElementById('root'));
     subRoot.render(
@@ -149,9 +175,9 @@ class App extends React.Component{
         <>
           <h1>Sign Up</h1>
           <hr/>
-          <input type="text" id="usernameTextbox" placeholder='Username'></input>
+          <input type="text" id="usernameTextbox" placeholder='Username' minLength={1} maxLength={20}></input>
           <br/>
-          <input type="text" id="passwordTextbox" placeholder='Password'></input>
+          <input type="text" id="passwordTextbox" placeholder='Password' minLength={1} maxLength={100}></input>
       
           <button id="submitSignUpBtn" onClick={()=>this.ExtractSignUpDetails(signUpWindow.document)}>Sign Up</button>
         </>
@@ -162,9 +188,18 @@ class App extends React.Component{
   ExtractSignUpDetails(signUpWindow){
     let username = signUpWindow.getElementById("usernameTextbox").value;
     let password = signUpWindow.getElementById("passwordTextbox").value;
+    if(username.length<1)
+      {
+        window.open("","SignUpWindow").alert("Please enter a new username");
+      }
+    else if(password.length<1){
+      window.open("","SignUpWindow").alert("Please enter a new password");
+    }
+    else{
     window.open("","SignUpWindow").close();
     console.log("button pressed!");
     this.state.client.SendSignUp(username, password);
+    }
   }
 
 
@@ -259,7 +294,7 @@ function Comment(props){
   return(
     <div className='comment' style={{backgroundColor:'lightgray', padding:'5px', margin:'5px'}}>
       {/* <h5>{props.posterUserName}</h5> */}
-      <p>{props.text}</p>
+      <p style={{wordWrap:"break-word",overflow: "scroll", maxHeight:"150px"}}>{props.text}</p>
     </div>
   )
 }

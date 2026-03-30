@@ -81,7 +81,16 @@ height: 100%;
   margin: 1%;
   word-wrap: break-word;
   max-height: 40%;
+}
+.post p{
+  max-height: 150px;
   overflow: scroll;
+}
+
+.post h3{
+max-height: 30px;
+word-wrap: break-word;
+overflow: scroll;
 }
 
 .post:hover{
