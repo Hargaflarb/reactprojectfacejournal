@@ -93,13 +93,25 @@ class WSClient extends React.Component
         
         this.client.send(jsonMessage);
     }
+
+    RequestCommentHistory(postID){
+        let jsonMessage = JSON.stringify(
+            {
+                message_type: "comment-history",
+                message:{
+                    postID: postID
+                }
+            }
+        )
+        
+        this.client.send(jsonMessage);
+    }
     
     SendPost(title, text){
         if (this.profile.profileID != null){
             let jsonMessage = JSON.stringify(
                 {
                     profileID: this.profile.profileID,
-                    
                     message_type: "post",
                     message:{
                         title: `${title}`,
@@ -195,7 +207,7 @@ class WSClient extends React.Component
                 break;
 
             case "comment":
-                //PostComment(received.message.text, received.message.postID, received.profileID, received.commentID);
+                this.app.AddComment(received.user, received.commentID, received.message.postID, received.message.text);
                 break;
 
             case "post-like":
@@ -203,12 +215,7 @@ class WSClient extends React.Component
                 break;
 
             case "comment-like":
-                if (received.messsge.isLike){
-                    //LikeComment(received.message.commentID);
-                }
-                else{
-                    //DislikeComment(received.message.commentID);
-                }
+                this.app.MakeCommentInteraction(received.message.commentID, received.message.isLike)
                 break;
 
             case "login":
@@ -236,10 +243,13 @@ class WSClient extends React.Component
                 break;
 
             case "post-history":
-                received.postHistoryList.forEach(post => {
-                    //Post(post.message.text, post.profileID, post.postID);
-                    this.app.SubmitNewPost(post.profileID, post.postID, received.message.title, post.message.text);
-                });
+                // console.log(received.postHistoryList);
+                this.app.SubmitNewPosts(received.postHistoryList);
+                
+                break;
+
+            case "comment-history":
+                this.app.AddComments(received.postID, received.commentHistoryList);
                 break;
 
             case "notice":
