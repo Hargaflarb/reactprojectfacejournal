@@ -242,10 +242,11 @@ class App extends React.Component{
 
   SubmitCommentInteraction(commentID, isLike){
     if (isLike){
-      this.state.allPosts.find((comment)=>comment.commentID==commentID).likes += 1;
+      console.log(this.state.allComments);
+      this.state.allComments.find((comment)=>comment.commentID==commentID).likes += 1;
     }
     else{
-      this.state.allPosts.find((comment)=>comment.commentID==commentID).dislikes += 1;
+      this.state.allComments.find((comment)=>comment.commentID==commentID).dislikes += 1;
     }
   }
 
