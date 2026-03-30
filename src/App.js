@@ -56,7 +56,7 @@ class App extends React.Component{
     subRoot.render(
       <React.StrictMode>
         <>
-        <div>
+        <div style={{backgroundColor: 'lightgray', padding: '5'}}>
         <h4>{post.posterUserName}</h4>
       <h3 style={{maxHeight: '50px', overflow: 'auto', overflowWrap: 'break-word'}}>{post.title}</h3>
       <p style={{maxHeight: '700px', overflow: 'auto', overflowWrap: 'break-word'}}>{post.text}</p>
@@ -338,7 +338,7 @@ class App extends React.Component{
 
   Comment(props){
   return(
-    <div className='comment'>
+    <div className='comment' style={{backgroundColor: 'lightgray', width: '100%', height: '15%', margin:'2px', padding: '3'}}>
       <h5>{props.posterUserName}</h5>
       <p style={{overflow: 'auto', overflowWrap: 'break-word'}}>{props.text}</p>
       <button onClick={() => this.MakeCommentInteraction(props.commentID, true)}>{`Likes: ${props.likes}`}</button> | <button onClick={() => this.MakeCommentInteraction(props.commentID, false)}>{`dislikes: ${props.dislikes}`}</button>
