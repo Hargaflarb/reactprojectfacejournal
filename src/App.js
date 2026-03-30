@@ -74,7 +74,7 @@ class App extends React.Component{
         <div style={{overflow: 'scroll'}}>
         {
           this.state.allComments.filter(comment=>comment.postID==post.postID).map((comment)=>
-            Comment({
+            this.Comment({
               key:comment.postID,
               posterUserName:post.posterUserName,
               text:comment.text,
@@ -245,6 +245,14 @@ class App extends React.Component{
     this.setState({allPosts: this.state.allPosts});
   }
 
+Comment(props){
+  return(
+    <div className='comment' style={{backgroundColor:'lightgray', padding:'5px', margin:'5px'}}>
+      {/* <h5>{props.posterUserName}</h5> */}
+      <p style={{wordWrap:"break-word",overflow: "scroll", maxHeight:"150px"}}>{props.text}</p>
+    </div>
+  )
+}
 
   Post(props){
     return(
@@ -290,14 +298,7 @@ class App extends React.Component{
 
 
 
-function Comment(props){
-  return(
-    <div className='comment' style={{backgroundColor:'lightgray', padding:'5px', margin:'5px'}}>
-      {/* <h5>{props.posterUserName}</h5> */}
-      <p style={{wordWrap:"break-word",overflow: "scroll", maxHeight:"150px"}}>{props.text}</p>
-    </div>
-  )
-}
+
 
 
 export default App;
