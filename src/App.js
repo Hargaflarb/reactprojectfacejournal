@@ -56,12 +56,12 @@ class App extends React.Component{
     subRoot.render(
       <React.StrictMode>
         <>
-        <div style={{backgroundColor: 'lightgray', padding: '5'}}>
+        <div style={{backgroundColor: 'lightgrey', padding: '5'}}>
         <h4>{post.posterUserName}</h4>
       <h3 style={{maxHeight: '50px', overflow: 'auto', overflowWrap: 'break-word'}}>{post.title}</h3>
       <p style={{maxHeight: '700px', overflow: 'auto', overflowWrap: 'break-word'}}>{post.text}</p>
       </div>
-        <textarea id='commentTextbox' placeholder='Comment...' maxLength={500}></textarea>
+        <textarea id='commentTextbox' placeholder='Comment...' maxLength={500} style={{width:'100%'}}></textarea>
         <button onClick={()=>this.ExtractCommentText(commentWindow.document,post.postID)}>Submit</button>
         <div>{
           // this.state.allComments.filter(comment=>comment.postID == post.postID).map((comment)=>
@@ -338,9 +338,9 @@ class App extends React.Component{
 
   Comment(props){
   return(
-    <div className='comment' style={{backgroundColor: 'lightgray', width: '100%', height: '15%', margin:'2px', padding: '3'}}>
-      <h5>{props.posterUserName}</h5>
-      <p style={{overflow: 'auto', overflowWrap: 'break-word'}}>{props.text}</p>
+    <div className='comment' style={{backgroundColor: 'lightgray', width: '95%', maxHight: '30%', margin:'2px', padding: '3px'}}>
+      <h5 style={{margin: '2px'}}>{props.posterUserName}</h5>
+      <p style={{overflow: 'auto', overflowWrap: 'break-word', maxHeight: '90%'}}>{props.text}</p>
       <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, true)}>{`Likes: ${props.likes}`}</button> | <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, false)}>{`dislikes: ${props.dislikes}`}</button>
     </div>
   )
