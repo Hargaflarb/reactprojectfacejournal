@@ -79,6 +79,18 @@ height: 100%;
   background-color: darkgray;
   padding: 20px;
   margin: 1%;
+  word-wrap: break-word;
+  max-height: 40%;
+}
+.post p{
+  max-height: 150px;
+  overflow: scroll;
+}
+
+.post h3{
+max-height: 30px;
+word-wrap: break-word;
+overflow: scroll;
 }
 
 .post:hover{
@@ -99,14 +111,6 @@ height: 100%;
 .viewCommentsBtn{
   height: 50px;
   cursor: pointer;
-}
-
-.newCommentField{
-  font-size: large;
-  background-color: lightgrey;
-}
-.newCommentField:hover{
-  background-color: white;
 }
 .post:hover .commentOptions{
   display: block;
