@@ -164,7 +164,6 @@ async function commentListQuery(postID){
      try {
         await sql.connect(sqlConfig);
         var commentList = await sql.query(`SELECT * FROM Comment WHERE PostID = '${postID}'`);
-        console.log(commentList);
         return commentList;
     }
     catch (err) {

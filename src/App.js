@@ -33,6 +33,7 @@ class App extends React.Component{
     this.DoBold = this.DoBold.bind(this);
     this.SubmitNewPost = this.SubmitNewPost.bind(this);
     this.ToggleDarkMode = this.ToggleDarkMode.bind(this);
+    this.MakeCommentInteraction = this.MakeCommentInteraction.bind(this);
   }
 
 
@@ -60,7 +61,7 @@ class App extends React.Component{
         <div>{
           // this.state.allComments.filter(comment=>comment.postID == post.postID).map((comment)=>
           (this.state.allComments[post.postID] != undefined) ? this.state.allComments[post.postID].map((comment)=>
-          Comment({
+          this.Comment({
             commentID:comment.commentID,
             postID:comment.postID,
             posterUserName:comment.posterUserName,
@@ -185,10 +186,10 @@ class App extends React.Component{
 
   //likes and dislikes
   MakeCommentInteraction(commentID, isLike){
+    console.log("Liked")
     let interactions = this.state.commentInteractions[commentID]
     if (!(isLike ? interactions.liked : interactions.disliked)){
       this.state.client.SendCommentLike(commentID, isLike);
-      console.log("Liked")
       if (isLike){
         this.state.commentInteractions[commentID].liked = true;
       }
@@ -290,7 +291,15 @@ class App extends React.Component{
     }
   }
 
-
+  Comment(props){
+  return(
+    <div className='comment'>
+      <h5>{props.posterUserName}</h5>
+      <p>{props.text}</p>
+      <button onClick={() => this.MakeCommentInteraction(props.commentID, true)}>{`Likes: ${props.likes}`}</button> | <button onClick={() => this.MakeCommentInteraction(props.commentID, false)}>{`dislikes: ${props.dislikes}`}</button>
+    </div>
+  )
+}
 
   Post(props){
     return(
@@ -337,15 +346,7 @@ class App extends React.Component{
 
 
 
-function Comment(props){
-  return(
-    <div className='comment'>
-      <h5>{props.posterUserName}</h5>
-      <p>{props.text}</p>
-      <button onClick={MakeCommentInteraction(props.commentID, true)}>{`Likes: ${props.likes}`}</button> | <button onClick={MakeCommentInteraction(props.commentID, false)}>{`dislikes: ${props.dislikes}`}</button>
-    </div>
-  )
-}
+
 
 function changeBGColor(coll, color){
 
