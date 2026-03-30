@@ -185,11 +185,11 @@ class App extends React.Component{
   }
 
   //likes and dislikes
-  MakeCommentInteraction(commentID, isLike){
+  MakeCommentInteraction(postID, commentID, isLike){
     console.log("Liked")
     let interactions = this.state.commentInteractions[commentID]
     if (!(isLike ? interactions.liked : interactions.disliked)){
-      this.state.client.SendCommentLike(commentID, isLike);
+      this.state.client.SendCommentLike(postID, commentID, isLike);
       if (isLike){
         this.state.commentInteractions[commentID].liked = true;
       }
@@ -240,13 +240,12 @@ class App extends React.Component{
 
   }
 
-  SubmitCommentInteraction(commentID, isLike){
+  SubmitCommentInteraction(postID, commentID, isLike){
     if (isLike){
-      console.log(this.state.allComments);
-      this.state.allComments.find((comment)=>comment.commentID==commentID).likes += 1;
+      this.state.allComments[postID].find((comment)=>comment.commentID==commentID).likes += 1;
     }
     else{
-      this.state.allComments.find((comment)=>comment.commentID==commentID).dislikes += 1;
+      this.state.allComments[postID].find((comment)=>comment.commentID==commentID).dislikes += 1;
     }
   }
 
@@ -297,7 +296,7 @@ class App extends React.Component{
     <div className='comment'>
       <h5>{props.posterUserName}</h5>
       <p>{props.text}</p>
-      <button onClick={() => this.MakeCommentInteraction(props.commentID, true)}>{`Likes: ${props.likes}`}</button> | <button onClick={() => this.MakeCommentInteraction(props.commentID, false)}>{`dislikes: ${props.dislikes}`}</button>
+      <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, true)}>{`Likes: ${props.likes}`}</button> | <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, false)}>{`dislikes: ${props.dislikes}`}</button>
     </div>
   )
 }
