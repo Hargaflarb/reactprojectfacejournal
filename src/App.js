@@ -369,7 +369,12 @@ class App extends React.Component{
       <div id="sidebar"><h2>Sidebar</h2>
         <button id="LoginBtn" onClick={this.CreateLoginPopup}><b>Log In</b></button>
         <button id="SignUpBtn" onClick={this.CreateSignUpPopup}><b>Sign Up</b></button>
-        <button id="DarkModeBtn" onClick={this.ToggleDarkMode}><b>D</b></button>
+        <br/>
+        <label class="switch">
+        <input type="checkbox" onClick={this.ToggleDarkMode}/>
+        <span class="slider round"></span>
+        </label>
+        <button id="DarkModeBtn" ><b>D</b></button>
       </div>
       <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={this.CreatePostPopup}><b>+</b></button></div>
       <div id="feed">{
