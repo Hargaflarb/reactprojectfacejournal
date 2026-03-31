@@ -31,13 +31,11 @@ class App extends React.Component{
     this.CreateLoginPopup = this.CreateLoginPopup.bind(this);
     this.CreateSignUpPopup = this.CreateSignUpPopup.bind(this);
     this.DoBold = this.DoBold.bind(this);
+    this.CommentDoBold = this.CommentDoBold.bind(this);
     this.SubmitNewPost = this.SubmitNewPost.bind(this);
     this.ToggleDarkMode = this.ToggleDarkMode.bind(this);
     this.MakeCommentInteraction = this.MakeCommentInteraction.bind(this);
   }
-
-
-
 
   ViewComments(post){
     let hasComments = this.state.allComments[post.postID] == undefined;
@@ -231,7 +229,6 @@ class App extends React.Component{
 
   //likes and dislikes
   MakeCommentInteraction(postID, commentID, isLike){
-    console.log("Liked")
     let interactions = this.state.commentInteractions[commentID]
     if (!(isLike ? interactions.liked : interactions.disliked)){
       this.state.client.SendCommentLike(postID, commentID, isLike);
@@ -272,6 +269,9 @@ class App extends React.Component{
       return prevComments;
     })(this.state.allComments)});
     this.state.commentInteractions[commentID] = {liked: false, disliked: false};
+
+    //updates rendere
+    this.ViewComments(this.state.allPosts.find(post=>post.postID === postID));
   }
 
   AddComments(postID, comments){
@@ -283,6 +283,8 @@ class App extends React.Component{
       this.state.commentInteractions[comment.commentID] = {liked: false, disliked: false};
     });
 
+    //updates rendere
+    this.ViewComments(this.state.allPosts.find(post=>post.postID === postID));
   }
 
   SubmitCommentInteraction(postID, commentID, isLike){
@@ -292,6 +294,9 @@ class App extends React.Component{
     else{
       this.state.allComments[postID].find((comment)=>comment.commentID==commentID).dislikes += 1;
     }
+
+    //updates rendere
+    this.ViewComments(this.state.allPosts.find(post=>post.postID === postID));
   }
 
   SubmitPostInteraction(postID, isLike){
@@ -341,7 +346,7 @@ class App extends React.Component{
     <div className='comment' style={{backgroundColor: 'lightgray', width: '95%', maxHight: '30%', margin:'2px', padding: '3px'}}>
       <h5 style={{margin: '2px'}}>{props.posterUserName}</h5>
       <p style={{overflow: 'auto', overflowWrap: 'break-word', maxHeight: '90%'}}>{props.text}</p>
-      <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, true)}>{`Likes: ${props.likes}`}</button> | <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, false)}>{`dislikes: ${props.dislikes}`}</button>
+      <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, true)}>{this.CommentDoBold(`Likes: ${props.likes}`, props.commentID, true)}</button> | <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, false)}>{this.CommentDoBold(`dislikes: ${props.dislikes}`, props.commentID, false)}</button>
     </div>
   )
 }
@@ -361,6 +366,11 @@ class App extends React.Component{
 
   DoBold(text, postID, intrctn){
     let intrctns = this.state.postInteractions[postID]; 
+    return (intrctn ? intrctns.liked : intrctns.disliked) ? <b>{text}</b> : <div>{text}</div>;
+  }
+
+  CommentDoBold(text, commentID, intrctn){
+    let intrctns = this.state.commentInteractions[commentID]; 
     return (intrctn ? intrctns.liked : intrctns.disliked) ? <b>{text}</b> : <div>{text}</div>;
   }
 
