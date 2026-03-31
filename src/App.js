@@ -338,7 +338,7 @@ class App extends React.Component{
 
   Comment(props){
   return(
-    <div className='comment' style={{backgroundColor: 'lightgray', width: '95%', maxHight: '30%', margin:'2px', padding: '3px'}}>
+    <div className='comment' key={props.commentID} style={{backgroundColor: 'lightgray', width: '95%', maxHight: '30%', margin:'2px', padding: '3px'}}>
       <h5 style={{margin: '2px'}}>{props.posterUserName}</h5>
       <p style={{overflow: 'auto', overflowWrap: 'break-word', maxHeight: '90%'}}>{props.text}</p>
       <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, true)}>{`Likes: ${props.likes}`}</button> | <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, false)}>{`dislikes: ${props.dislikes}`}</button>
@@ -348,7 +348,7 @@ class App extends React.Component{
 
   Post(props){
     return(
-    <div className="post">
+    <div className="post" key={props.postID}>
       <h4>{props.posterUserName}</h4>
       <h3>{props.title}</h3>
       <p>{props.text}</p>
@@ -370,9 +370,9 @@ class App extends React.Component{
         <button id="LoginBtn" onClick={this.CreateLoginPopup}><b>Log In</b></button>
         <button id="SignUpBtn" onClick={this.CreateSignUpPopup}><b>Sign Up</b></button>
         <br/>
-        <label class="switch">
+        <label className="switch">
         <input type="checkbox" onClick={this.ToggleDarkMode}/>
-        <span class="slider round"></span>
+        <span className="slider round"></span>
         </label>
         <button id="DarkModeBtn" ><b>D</b></button>
       </div>
