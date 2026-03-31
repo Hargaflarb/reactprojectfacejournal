@@ -4,15 +4,6 @@ import ReactDOM from 'react-dom/client';
 import React, { useState, useEffect} from 'react';
 import WSClient from './Client';
 
-function LightDarkMode(state){
-    const [mode,setMode]=useState(false)
-  
-
-      console.log("dark mode: "+state);
-      setMode(state);
-  
-}
-
 class App extends React.Component{
   constructor(props){
     super(props);
@@ -43,6 +34,9 @@ class App extends React.Component{
     this.ToggleDarkMode = this.ToggleDarkMode.bind(this);
     this.MakeCommentInteraction = this.MakeCommentInteraction.bind(this);
   }
+
+
+
 
   ViewComments(post){
     let hasComments = this.state.allComments[post.postID] == undefined;
@@ -378,7 +372,7 @@ class App extends React.Component{
         <br/>
         <p>Dark mode</p>
         <label className="switch">
-        <input type="checkbox" id="DarkModeBtn" onClick={LightDarkMode(true)}/>
+        <input type="checkbox" id="DarkModeBtn" onClick={this.ToggleDarkMode}/>
         <span className="slider round" ></span>
         </label>
       </div>
