@@ -4,6 +4,14 @@ import ReactDOM from 'react-dom/client';
 import React, { useState, useEffect} from 'react';
 import WSClient from './Client';
 
+function LightDarkMode(state){
+    const [mode,setMode]=useState(false)
+  
+
+      console.log("dark mode: "+state);
+      setMode(state);
+  
+}
 
 class App extends React.Component{
   constructor(props){
@@ -22,7 +30,7 @@ class App extends React.Component{
 
       ],
       client: props.client.ReferanceExchange(this),
-      darkmode: false
+      darkmode: true
     }
 
     this.CreatePostPopup = this.CreatePostPopup.bind(this);
@@ -35,9 +43,6 @@ class App extends React.Component{
     this.ToggleDarkMode = this.ToggleDarkMode.bind(this);
     this.MakeCommentInteraction = this.MakeCommentInteraction.bind(this);
   }
-
-
-
 
   ViewComments(post){
     let hasComments = this.state.allComments[post.postID] == undefined;
@@ -370,11 +375,12 @@ class App extends React.Component{
         <button id="LoginBtn" onClick={this.CreateLoginPopup}><b>Log In</b></button>
         <button id="SignUpBtn" onClick={this.CreateSignUpPopup}><b>Sign Up</b></button>
         <br/>
+        <br/>
+        <p>Dark mode</p>
         <label className="switch">
-        <input type="checkbox" onClick={this.ToggleDarkMode}/>
-        <span className="slider round"></span>
+        <input type="checkbox" id="DarkModeBtn" onClick={LightDarkMode(true)}/>
+        <span className="slider round" ></span>
         </label>
-        <button id="DarkModeBtn" ><b>D</b></button>
       </div>
       <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={this.CreatePostPopup}><b>+</b></button></div>
       <div id="feed">{
