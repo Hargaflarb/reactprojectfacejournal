@@ -234,21 +234,13 @@ class App extends React.Component{
       }
 
       function passwordRequirments(password){
-        let nums = 0;
-        for (let i = 0; i < String(password).length; i += 1){
+        let has3numbers = /.*\d.*\d.*\d.*/.test(password);
 
-          let char = String(password).charAt(i);
-          ["1","2","3","4","5","6","7","8","9","0"].forEach((num)=>{
-            if (num === char){
-              nums += 1;
-            }
-          });
-        }
-        if (nums < 3){
-          return "Needs atleast 3 numbers";
+        if (has3numbers){
+          return "Password meet requirements";
         }
         else{
-          return "Password meet requirements";
+          return "Needs atleast 3 numbers";
         }
       }
 
