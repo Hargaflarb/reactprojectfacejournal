@@ -68,7 +68,7 @@ width:80%;
 box-sizing: border-box;
 padding-left: 5%;
 padding-right: 2%;
-overflow: scroll;
+overflow: auto;
 }
 
 #root,body,html{
@@ -79,6 +79,18 @@ height: 100%;
   background-color: darkgray;
   padding: 20px;
   margin: 1%;
+}
+
+.post p{
+  max-height: 300px;
+  overflow-wrap: break-word;
+overflow: auto;
+}
+
+.post h3{
+  max-height: 50px;
+  overflow-wrap: break-word;
+overflow: auto;
 }
 
 .post:hover{
