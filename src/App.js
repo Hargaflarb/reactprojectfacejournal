@@ -331,7 +331,6 @@ class App extends React.Component{
     this.state.commentInteractions[commentID] = {liked: false, disliked: false};
 
     //updates rendere
-    // window.open("","commentsWndow").close();
     // this.ViewComments(this.state.allPosts.find(post=>post.postID === postID));
   }
 
@@ -345,7 +344,6 @@ class App extends React.Component{
     });
 
     //updates rendere
-    // window.open("","commentsWndow").close();
     // this.ViewComments(this.state.allPosts.find(post=>post.postID === postID));
   }
 
@@ -358,7 +356,6 @@ class App extends React.Component{
     }
 
     //updates rendere
-    // window.open("","commentsWndow").close();
     // this.ViewComments(this.state.allPosts.find(post=>post.postID === postID));
   }
 
