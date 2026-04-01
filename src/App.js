@@ -380,6 +380,7 @@ class App extends React.Component{
       window.document.getElementById("header").style.backgroundColor = "hsl(0, 0%, 34%)";
       window.document.getElementById("sidebar").style.backgroundColor = "hsl(0, 0%, 17%)";
       window.document.getElementById("feed").style.backgroundColor = "hsl(0, 0%, 50%)";
+      window.document.getElementById("root").style.color="white";
       changeBGColor(window.document.getElementsByClassName("post"), "hsl(0, 0%, 34%)");
       // changeBGColor(window.document.getElementsByClassName("post:hover"), "hsl(0, 0%, 17%)");
       window.document.getElementById("addPostBtn").style.backgroundColor = "hsl(0, 0%, 17%)";
@@ -389,6 +390,7 @@ class App extends React.Component{
     else{
       changeBGColor(window.document.getElementsByClassName("App-header"), "#282c34");
       changeColor(window.document.getElementsByClassName("App-link"), "#61dafb");
+      window.document.getElementById("root").style.color="black";
       window.document.getElementById("header").style.backgroundColor = "#a9a9a9";
       window.document.getElementById("sidebar").style.backgroundColor = "#d3d3d3";
       window.document.getElementById("feed").style.backgroundColor = "#808080";

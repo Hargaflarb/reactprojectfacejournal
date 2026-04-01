@@ -37,6 +37,11 @@
   }
 }
 
+:root{
+  color-scheme: light dark;
+  color: black;
+}
+
 #header{
   background-color: darkgray;
   align-content: center;
