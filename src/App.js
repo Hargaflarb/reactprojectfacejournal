@@ -58,7 +58,7 @@ class App extends React.Component{
       <h3 style={{maxHeight: '50px', overflow: 'auto', overflowWrap: 'break-word'}}>{post.title}</h3>
       <p style={{maxHeight: '700px', overflow: 'auto', overflowWrap: 'break-word'}}>{post.text}</p>
       </div>
-        <textarea id='commentTextbox' placeholder='Comment...' maxLength={500} style={{width:'100%'}}></textarea>
+        <CommentLengthHook maxChar={200}/>
         <button onClick={()=>this.ExtractCommentText(commentWindow.document,post.postID)}>Submit</button>
         <div>{
           // this.state.allComments.filter(comment=>comment.postID == post.postID).map((comment)=>
@@ -76,6 +76,22 @@ class App extends React.Component{
         </>
       </React.StrictMode>
     );
+
+
+    function CommentLengthHook(props){
+      const [commentLength, setCommentLength] = useState("");
+
+      function handleChange(event){
+        setCommentLength(event.target.value.length);
+      }
+
+      return (
+        <>
+          <textarea id='commentTextbox' placeholder='Comment...' maxLength={props.maxChar} onChange={handleChange} style={{width:'100%'}}></textarea>
+          <p>{commentLength}/{props.maxChar}</p>
+        </>
+      )
+    }
   }
 
   ExtractCommentText(postDocument,postID){
@@ -104,12 +120,28 @@ class App extends React.Component{
           <hr/>
           <input type="text" id="titleTextbox" placeholder='New Post Title' maxLength={200} style={{backgroundColor: 'light-gray'}}></input>
           <br/>
-          <textarea id="contentTextbox" placeholder='Write your post here' maxLength={2000} style={{backgroundColor: 'light-gray', height:'70%',width:'98%', alignSelf:'center'}}></textarea>
+          <PostLengthHook maxChar={2000}/>
           <br/>
           <button id="submitPostBtn" onClick={()=>this.ExtractText(postWindow.document)} style={{height:'8%', width:'20%', float:'right', fontSize:'100%'}}>Post</button>
         </>
       </React.StrictMode>
     );
+
+    function PostLengthHook(props){
+      const [postLength, setPostLength] = useState("");
+
+      function handleChange(event){
+        setPostLength(event.target.value.length);
+      }
+
+      return (
+        <>
+          <textarea id="contentTextbox" placeholder='Write your post here' maxLength={props.maxChar} onChange={handleChange} style={{backgroundColor: 'light-gray', height:'70%',width:'98%', alignSelf:'center'}}></textarea>
+          <p>{postLength}/{props.maxChar}</p>
+        </>
+      )
+    }
+
   }
 
   ExtractText(postDocument){
@@ -182,15 +214,43 @@ class App extends React.Component{
       <React.StrictMode>
         <>
           <h1>Sign Up</h1>
+          <button id="submitSignUpBtn" onClick={()=>this.ExtractSignUpDetails(signUpWindow.document)}>Sign Up</button>
           <hr/>
           <input type="text" id="usernameTextbox" placeholder='Username' maxLength={20}></input>
           <br/>
-          <input type="text" id="passwordTextbox" placeholder='Password' maxLength={100}></input>
-      
-          <button id="submitSignUpBtn" onClick={()=>this.ExtractSignUpDetails(signUpWindow.document)}>Sign Up</button>
+          <PasswordWithHooks/>
         </>
       </React.StrictMode>
     );
+
+
+
+    function PasswordWithHooks(props){
+      const [value, setValue] = useState("");
+
+      function handleChange(event){
+        setValue(passwordRequirments(event.target.value));
+      }
+
+      function passwordRequirments(password){
+        let has3numbers = /.*\d.*\d.*\d.*/.test(password);
+
+        if (has3numbers){
+          return "Password meet requirements";
+        }
+        else{
+          return "Needs atleast 3 numbers";
+        }
+      }
+
+      return (
+        <>
+          <input type="text" id="passwordTextbox" placeholder='Password' maxLength={100} onChange={handleChange}></input>
+          <br/>
+          <p>{value}</p>
+        </>
+      )
+    }
   }
 
   ExtractSignUpDetails(signUpWindow){
@@ -341,14 +401,14 @@ class App extends React.Component{
   }
 
   Comment(props){
-  return(
-    <div className='comment' key={props.commentID} style={{backgroundColor: 'lightgray', width: '95%', maxHight: '30%', margin:'2px', padding: '3px'}}>
-      <h5 style={{margin: '2px'}}>{props.posterUserName}</h5>
-      <p style={{overflow: 'auto', overflowWrap: 'break-word', maxHeight: '90%'}}>{props.text}</p>
-      <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, true)}>{this.CommentDoBold(`Likes: ${props.likes}`, props.commentID, true)}</button> | <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, false)}>{this.CommentDoBold(`dislikes: ${props.dislikes}`, props.commentID, false)}</button>
-    </div>
-  )
-}
+    return(
+      <div className='comment' key={props.commentID} style={{backgroundColor: 'lightgray', width: '95%', maxHight: '30%', margin:'2px', padding: '3px'}}>
+        <h5 style={{margin: '2px'}}>{props.posterUserName}</h5>
+        <p style={{overflow: 'auto', overflowWrap: 'break-word', maxHeight: '90%'}}>{props.text}</p>
+        <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, true)}>{this.CommentDoBold(`Likes: ${props.likes}`, props.commentID, true)}</button> | <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, false)}>{this.CommentDoBold(`dislikes: ${props.dislikes}`, props.commentID, false)}</button>
+      </div>
+    )
+  }
 
   Post(props){
     return(
