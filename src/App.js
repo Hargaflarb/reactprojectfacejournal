@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom/client';
 import React, { useState, useEffect} from 'react';
 import WSClient from './Client';
 
-
 class App extends React.Component{
   constructor(props){
     super(props);
@@ -22,7 +21,7 @@ class App extends React.Component{
 
       ],
       client: props.client.ReferanceExchange(this),
-      darkmode: false
+      darkmode: true
     }
 
     this.CreatePostPopup = this.CreatePostPopup.bind(this);
@@ -381,6 +380,7 @@ class App extends React.Component{
       window.document.getElementById("header").style.backgroundColor = "hsl(0, 0%, 34%)";
       window.document.getElementById("sidebar").style.backgroundColor = "hsl(0, 0%, 17%)";
       window.document.getElementById("feed").style.backgroundColor = "hsl(0, 0%, 50%)";
+      window.document.getElementById("root").style.color="white";
       changeBGColor(window.document.getElementsByClassName("post"), "hsl(0, 0%, 34%)");
       // changeBGColor(window.document.getElementsByClassName("post:hover"), "hsl(0, 0%, 17%)");
       window.document.getElementById("addPostBtn").style.backgroundColor = "hsl(0, 0%, 17%)";
@@ -390,6 +390,7 @@ class App extends React.Component{
     else{
       changeBGColor(window.document.getElementsByClassName("App-header"), "#282c34");
       changeColor(window.document.getElementsByClassName("App-link"), "#61dafb");
+      window.document.getElementById("root").style.color="black";
       window.document.getElementById("header").style.backgroundColor = "#a9a9a9";
       window.document.getElementById("sidebar").style.backgroundColor = "#d3d3d3";
       window.document.getElementById("feed").style.backgroundColor = "#808080";
@@ -403,7 +404,7 @@ class App extends React.Component{
 
   Comment(props){
     return(
-      <div className='comment' style={{backgroundColor: 'lightgray', width: '95%', maxHight: '30%', margin:'2px', padding: '3px'}}>
+      <div className='comment' key={props.commentID} style={{backgroundColor: 'lightgray', width: '95%', maxHight: '30%', margin:'2px', padding: '3px'}}>
         <h5 style={{margin: '2px'}}>{props.posterUserName}</h5>
         <p style={{overflow: 'auto', overflowWrap: 'break-word', maxHeight: '90%'}}>{props.text}</p>
         <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, true)}>{this.CommentDoBold(`Likes: ${props.likes}`, props.commentID, true)}</button> | <button onClick={() => this.MakeCommentInteraction(props.postID, props.commentID, false)}>{this.CommentDoBold(`dislikes: ${props.dislikes}`, props.commentID, false)}</button>
@@ -413,7 +414,7 @@ class App extends React.Component{
 
   Post(props){
     return(
-    <div className="post">
+    <div className="post" key={props.postID}>
       <h4>{props.posterUserName}</h4>
       <h3>{props.title}</h3>
       <p>{props.text}</p>
@@ -439,7 +440,13 @@ class App extends React.Component{
       <div id="sidebar"><h2>Sidebar</h2>
         <button id="LoginBtn" onClick={this.CreateLoginPopup}><b>Log In</b></button>
         <button id="SignUpBtn" onClick={this.CreateSignUpPopup}><b>Sign Up</b></button>
-        <button id="DarkModeBtn" onClick={this.ToggleDarkMode}><b>D</b></button>
+        <br/>
+        <br/>
+        <p>Dark mode</p>
+        <label className="switch">
+        <input type="checkbox" id="DarkModeBtn" onClick={this.ToggleDarkMode}/>
+        <span className="slider round" ></span>
+        </label>
       </div>
       <div id="header"><h2>Group/Server name</h2><button id="addPostBtn" onClick={this.CreatePostPopup}><b>+</b></button></div>
       <div id="feed">{
