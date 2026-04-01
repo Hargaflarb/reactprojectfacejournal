@@ -331,6 +331,7 @@ class App extends React.Component{
     this.state.commentInteractions[commentID] = {liked: false, disliked: false};
 
     //updates rendere
+    // vv uncomment this to make the comment popup update
     // this.ViewComments(this.state.allPosts.find(post=>post.postID === postID));
   }
 
@@ -344,6 +345,7 @@ class App extends React.Component{
     });
 
     //updates rendere
+    // vv uncomment this to make the comment popup update
     // this.ViewComments(this.state.allPosts.find(post=>post.postID === postID));
   }
 
@@ -356,6 +358,7 @@ class App extends React.Component{
     }
 
     //updates rendere
+    // vv uncomment this to make the comment popup update
     // this.ViewComments(this.state.allPosts.find(post=>post.postID === postID));
   }
 
